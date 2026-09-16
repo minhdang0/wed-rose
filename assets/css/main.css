@@ -1,0 +1,65 @@
+:root {
+  --paper: #fbf6ec;
+  --paper-2: #f4e9d8;
+  --ink: #2a1408;
+  --ink-2: #7a5a47;
+  --olive: #4e0707;
+  --olive-2: #a9793d;
+  --sand: #c9a227;
+  --hair: rgba(42, 20, 8, 0.15);
+  --text-hero: #000000;
+  --pad: clamp(22px, 6vw, 72px);
+  --maxw: 1120px;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  font-family: "Be Vietnam Pro", system-ui, sans-serif;
+  font-weight: 300;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+body:not(.opened) {
+  overflow: hidden;
+  height: 100vh;
+}
+.pf {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 400;
+}
+.script {
+  font-family: "Alex Brush", cursive;
+  font-weight: 400;
+}
+img {
+  display: block;
+  max-width: 100%;
+}
+a {
+  color: inherit;
+}
+:focus-visible {
+  outline: 1.5px solid var(--olive);
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
