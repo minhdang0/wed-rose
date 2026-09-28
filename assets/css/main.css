@@ -10,16 +10,21 @@
   --text-hero: #000000;
   --pad: clamp(22px, 6vw, 72px);
   --maxw: 1120px;
+  --font-heading: "Corinthia", cursive;
+  --text-title-dark: #1d1d1d;
 }
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
+
 body {
   font-family: "Be Vietnam Pro", system-ui, sans-serif;
   font-weight: 300;
@@ -28,38 +33,60 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto;
 }
+
 body:not(.opened) {
   overflow: hidden;
   height: 100vh;
 }
+
 .pf {
   font-family: "Playfair Display", Georgia, serif;
   font-weight: 400;
 }
+
 .script {
   font-family: "Alex Brush", cursive;
   font-weight: 400;
 }
+
 img {
   display: block;
   max-width: 100%;
 }
+
 a {
   color: inherit;
 }
+
 :focus-visible {
   outline: 1.5px solid var(--olive);
   outline-offset: 4px;
 }
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
+
   *,
   *::before,
   *::after {
     animation: none !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+.cols.two,
+.cols.side {
+  grid-template-columns: 1fr !important;
+}
+.sched .row {
+  grid-template-columns: 76px 1fr !important;
+  gap: 18px !important;
+}
+.contacts {
+  grid-template-columns: 1fr !important;
 }
