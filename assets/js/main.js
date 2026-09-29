@@ -201,12 +201,12 @@
       const maxX = Math.max(
         0,
         track.scrollWidth -
-          track.parentElement.clientWidth +
-          (parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue(
-              "--pad",
-            ),
-          ) || 24),
+        track.parentElement.clientWidth +
+        (parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--pad",
+          ),
+        ) || 24),
       );
       track.style.transform = "translate3d(-" + progress * maxX + "px,0,0)";
       if (fill) fill.style.width = progress * 100 + "%";
@@ -238,10 +238,10 @@
     const n = parseInt($("rCount").value || "0", 10);
     $("doneText").textContent = go
       ? "Cảm ơn " +
-        nm +
-        ". Chúng mình đã giữ " +
-        (n + 1) +
-        " chỗ cho ngày 25.10."
+      nm +
+      ". Chúng mình đã giữ " +
+      (n + 1) +
+      " chỗ cho ngày 25.10."
       : "Cảm ơn " + nm + " đã phản hồi. Hẹn gặp bạn dịp gần nhất nhé.";
     form.style.display = "none";
     done.classList.add("show");
@@ -368,70 +368,76 @@
     var stage = $("storyStage");
     if (!stage) return;
 
-    var flipper = $("storyFlipper");
-    var faceFront = $("faceFront");
-    var faceBack = $("faceBack");
+    var card = $("storyCard");
+    var halves = [$("pivotImg"), $("pivotText")];
+    var len = storyData.length;
     var current = 0;
+    var busy = false;
+    var timer;
 
-    function fillFace(suffix, faceEl, item, idx) {
-      var img = $("img" + suffix);
+    // preload để không nháy ảnh
+    storyData.forEach(function (s) {
+      var im = new Image();
+      im.src = s.img;
+    });
+
+    function render(i) {
+      var item = storyData[i];
+      var img = $("storyImg");
       img.src = item.img;
       img.alt = item.title;
-      $("year" + suffix).textContent = item.year + " - " + item.title;
-      $("text" + suffix).textContent = item.text;
-      faceEl.classList.toggle("swapped", idx % 2 === 1);
+      $("storyYear").textContent = item.year + " - " + item.title;
+      $("storyText").textContent = item.text;
+      $("storyCount").textContent =
+        String(i + 1).padStart(2, "0") + " / " + String(len).padStart(2, "0");
+      card.classList.toggle("swapped", i % 2 === 1);
     }
-    fillFace("Front", faceFront, storyData[0], 0);
-    fillFace("Back", faceBack, storyData[1], 1);
 
-    var storyTimer;
-    function triggerStory(manual) {
-      if (flipper.classList.contains("flip")) return;
-      var next = (current + 1) % storyData.length;
-      fillFace("Back", faceBack, storyData[next], next);
-      flipper.classList.add("flip");
-      if (manual) {
-        clearInterval(storyTimer);
-        storyTimer = setInterval(function () {
-          triggerStory(false);
-        }, 5000);
+    function pivot(from, to, ms, easing, dir) {
+      return Promise.all(
+        halves.map(function (el) {
+          return el.animate(
+            [
+              { transform: "perspective(1200px) rotateX(" + from * dir + "deg)" },
+              { transform: "perspective(1200px) rotateX(" + to * dir + "deg)" },
+            ],
+            { duration: ms, easing: easing, fill: "both" },
+          ).finished;
+        }),
+      );
+    }
+
+    async function next(manual) {
+      if (busy) return;
+      busy = true;
+      if (manual) startTimer();
+
+      var n = (current + 1) % len;
+      var dir = n % 2 === 1 ? 1 : -1;   
+
+      if (reduce) {
+        render(n);
+        current = n;
+        busy = false;
+        return;
       }
+
+      await pivot(0, 90, 550, "cubic-bezier(0.5, 0, 0.9, 0.6)", dir);  
+      render(n);                                                         
+      try { await $("storyImg").decode(); } catch (e) { }
+      await pivot(-90, 0, 650, "cubic-bezier(0.1, 0.4, 0.3, 1)", dir);  
+      current = n;
+      busy = false;
     }
 
-    function finishStoryFlip() {
-      var next = (current + 1) % storyData.length;
-      fillFace("Front", faceFront, storyData[next], next);
-      flipper.style.transition = "none";
-      flipper.classList.remove("flip");
-      void flipper.offsetHeight;
-      flipper.style.transition = "";
-      current = next;
-      var upcoming = (current + 1) % storyData.length;
-      fillFace("Back", faceBack, storyData[upcoming], upcoming);
+    function startTimer() {
+      clearInterval(timer);
+      timer = setInterval(function () { next(false); }, 5000);
     }
 
-    if (!reduce) {
-      flipper.addEventListener("transitionend", function (e) {
-        if (e.propertyName !== "transform") return;
-        finishStoryFlip();
-      });
-      stage.addEventListener("click", function () {
-        triggerStory(true);
-      });
-      storyTimer = setInterval(function () {
-        triggerStory(false);
-      }, 5000);
-    } else {
-      flipper.style.transition = "none";
-      stage.addEventListener("click", function () {
-        current = (current + 1) % storyData.length;
-        fillFace("Front", faceFront, storyData[current], current);
-      });
-      storyTimer = setInterval(function () {
-        current = (current + 1) % storyData.length;
-        fillFace("Front", faceFront, storyData[current], current);
-      }, 5000);
-    }
+    render(0);
+    stage.addEventListener("click", function () { next(true); });
+    startTimer();
   })();
   /* album Cherished Moments — cuộn dọc thì dải ảnh chạy ngang */
   (function () {
