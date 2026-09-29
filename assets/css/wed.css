@@ -270,14 +270,12 @@ section {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(46, 4, 4, 0.55) 0%,
-    rgba(46, 4, 4, 0.1) 22%,
-    rgba(46, 4, 4, 0.08) 38%,
-    rgba(46, 4, 4, 0.25) 58%,
-    #fbf6ec 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(46, 4, 4, 0.55) 0%,
+      rgba(46, 4, 4, 0.1) 22%,
+      rgba(46, 4, 4, 0.08) 38%,
+      rgba(46, 4, 4, 0.25) 58%,
+      #fbf6ec 100%);
 }
 
 .hero-kicker {
@@ -351,8 +349,8 @@ section {
   font-weight: 100;
   font-size: 0.9rem;
   color: var(--soft-black);
-  text-transform: uppercase;
   gap: 1.2rem;
+  line-height: 1.5;
 }
 
 .hn-groom,
@@ -374,6 +372,9 @@ section {
 .hn-groom span:last-child,
 .hn-bride span:last-child {
   font-size: 1.1rem;
+  font-family: "Arsenal", sans-serif;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 
 @keyframes nameShine {
@@ -387,6 +388,7 @@ section {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .hn-groom span:last-child,
   .hn-bride span:last-child {
     animation: none;
@@ -397,6 +399,7 @@ section {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .hero-groom,
   .hero-and,
   .hero-bride {
@@ -429,6 +432,7 @@ section {
 }
 
 @keyframes cue {
+
   0%,
   100% {
     transform: scaleY(0.3);
@@ -491,6 +495,7 @@ body.opened .rv.d3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .rv,
   .io {
     opacity: 1;
@@ -1685,7 +1690,7 @@ footer .sub {
   left: 100%;
 }
 
-.letter-title span > .lt-dot {
+.letter-title span>.lt-dot {
   position: absolute;
   top: 52%;
   width: 4px;
@@ -1906,83 +1911,107 @@ footer .sub {
 
 /* ================= OUR LOVE STORY ================= */
 .story-wrap {
-  max-width: 84%;
-  margin: 0 auto;
-  padding: 24px;
+  padding: 24px 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
+  justify-content: center;
   cursor: pointer;
 }
 
-.story-hint {
-  font-size: 0.62rem;
+/* khung cố định: 328 x 448, không phụ thuộc màn hình */
+.story-frame {
+  --edge: 24px;
+  position: relative;
+  width: 328px;
+  height: 448px;
+  flex: 0 0 auto;
+}
+
+/* đường kẻ mảnh bao quanh thẻ */
+.story-frame::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--edge) - 6px);
+  border: 1px solid rgba(78, 7, 7, 0.35);
+  pointer-events: none;
+}
+
+.story-frame .corner {
+  width: var(--edge);
+  height: var(--edge);
+  border-radius: 0;
+}
+
+.sf-edge {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Antonio", sans-serif;
+  font-weight: 300;
+  font-size: 0.6rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #a9793d;
+  color: var(--olive);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 3;
 }
+.sf-t { top: 0;    left: var(--edge); right: var(--edge); height: calc(var(--edge) - 6px); }
+.sf-b { bottom: 0; left: var(--edge); right: var(--edge); height: calc(var(--edge) - 6px); }
 
-.story-flip {
-  width: 100%;
-  height: clamp(320px, 78vw, 420px);
-  perspective: 1700px;
+.sf-l,
+.sf-r {
+  top: var(--edge);
+  bottom: var(--edge);
+  width: calc(var(--edge) - 6px);
+  writing-mode: vertical-rl;
 }
+.sf-l { left: 0;  transform: rotate(180deg); }
+.sf-r { right: 0; }
 
-.story-flipper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+.rec {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: #c0392b;
+  animation: blink 1.2s steps(2, start) infinite;
 }
+@keyframes blink { to { visibility: hidden; } }
 
-.story-flipper.flip {
-  transform: rotateX(-180deg);
-}
-
-.story-face {
+/* thẻ nội dung: cố định 280 x 400 */
+.story-card {
   position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  border-radius: 6px;
-  box-shadow: 0 24px 54px -22px rgba(20, 2, 2, 0.4);
+  inset: var(--edge);
   display: flex;
-  flex-direction: column; /* mặc định: ảnh trên, content dưới */
-  gap: 16px; /* khoảng cách giữa ảnh và content */
-  background: #fbf6ec;
-  padding: 1.2rem 0 1.2rem 0;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--paper);
 }
-
-.story-face.back {
-  transform: rotateX(180deg);
-}
-
-/* đảo vị trí: content lên trên, ảnh xuống dưới */
-.story-face.swapped {
+.story-card.swapped {
   flex-direction: column-reverse;
 }
 
-/* width & height của ảnh và content luôn bằng nhau vì cùng định nghĩa ở đây */
+/* mỗi nửa là một cánh cửa có trục riêng ở giữa */
 .story-half {
-  flex: 1 1 50%;
+  flex: 1 1 0;
   min-height: 0;
-  width: 84%;
-  margin: 0 auto;
+  transform-origin: 50% 50%;
+  will-change: transform;
 }
 
 .img-half {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  overflow: hidden;
   background: var(--olive);
-  padding: 4px;
   border-radius: 4px;
 }
 .img-half img {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
   object-fit: cover;
   border-radius: 4px;
 }
@@ -1993,6 +2022,8 @@ footer .sub {
   align-items: center;
   justify-content: center;
   text-align: center;
+  overflow: hidden;
+  padding: 0 12px;
   border-radius: 4px;
   border: 2px solid var(--olive);
 }
@@ -2003,45 +2034,34 @@ footer .sub {
   color: var(--text-title-dark);
 }
 
-.content-half h3 {
-  font-family: "Playfair Display", serif;
-  font-weight: 400;
-  font-size: 1.05rem;
-  margin: 0.25em 0;
-}
-
 .content-half p {
   font-size: 0.92rem;
   font-style: italic;
   color: var(--text-title-dark);
-  margin: 0;
-  padding: 0 16px;
+  margin: 6px 0 0;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .story-flipper {
-    transition: none;
-  }
 }
 
 /* ================= CHERISHED MOMENTS — CUỘN NGANG ================= */
 .album-scroll {
   position: relative;
-  height: 400vh; /* càng lớn thì chạy ngang càng chậm */
+  height: 400vh;
+  /* càng lớn thì chạy ngang càng chậm */
 }
 
 .album-frame {
   position: sticky;
-  top: 5vh; /* (100vh - 90vh) / 2 */
+  top: 5vh;
+  /* (100vh - 90vh) / 2 */
   height: 90vh;
   height: 90svh;
   overflow: hidden;
   isolation: isolate;
 }
+
 .album-frame::before {
   content: "";
   position: absolute;
@@ -2098,6 +2118,7 @@ footer .sub {
   width: 460px;
   height: 560px;
 }
+
 .p1-a {
   top: 0;
   left: 0;
@@ -2105,6 +2126,7 @@ footer .sub {
   height: 22.2rem;
   z-index: 3;
 }
+
 .p1-b {
   top: 11.2rem;
   left: 14rem;
@@ -2112,6 +2134,7 @@ footer .sub {
   height: 11rem;
   z-index: 3;
 }
+
 .p1-c {
   top: 23rem;
   left: 6rem;
@@ -2152,6 +2175,7 @@ footer .sub {
   font-size: 3.2rem;
   transform: rotate(-90deg);
 }
+
 /* ---------- khối 2 (số ví dụ, chỉnh theo ý bạn) ---------- */
 .second-card {
   width: 520px;
@@ -2199,9 +2223,11 @@ footer .sub {
   .album-scroll {
     height: auto;
   }
+
   .album-frame {
     position: relative;
     top: 0;
     overflow-x: auto;
   }
 }
+
