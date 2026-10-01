@@ -1273,7 +1273,7 @@ footer .sub {
 }
 
 .third-card {
-  width: 800px;
+  width: 700px;
   height: 90%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
