@@ -19,7 +19,7 @@
   }
 
   /* mở thiệp — phong bì */
-  const envelope = $ ("envelope"),
+  const envelope = $("envelope"),
     gate = $("gate");
   $("openBtn").addEventListener("click", () => {
     envelope.classList.add("open");
@@ -239,14 +239,107 @@
       const maxX = Math.max(0, track.scrollWidth - frame.clientWidth);
       track.style.transform = "translate3d(" + -progress * maxX + "px,0,0)";
     }
-    
+
     function onScroll() {
       if (raf === null) raf = requestAnimationFrame(render);
     }
-    
+
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     window.addEventListener("load", onScroll);
     render();
+  })();
+
+  /* Đếm ngược Save The Date (ngày : giờ : phút : giây, số cuộn như đồng hồ)
+     Dán vào main.js, bên trong IIFE (trước dòng "})();" cuối file),
+     để dùng được hàm $ và biến reduce có sẵn. */
+  (function () {
+    var units = {
+      days: $("cdDays"),
+      hours: $("cdHours"),
+      minutes: $("cdMinutes"),
+      seconds: $("cdSeconds"),
+    };
+    var ok = Object.keys(units).every(function (k) { return units[k]; });
+    if (!ok) return;
+
+    // Đổi ngày giờ ở đây (+07:00 = giờ Việt Nam)
+    var target = new Date("2026-10-25T09:00:00+07:00").getTime();
+    var DURATION = 450;
+    var EASING = "cubic-bezier(0.7, 0, 0.3, 1)";
+
+    function pad(n) {
+      return String(n).padStart(2, "0");
+    }
+
+    // đặt 1 chữ số, có hiệu ứng cuộn khi đổi
+    function setDigit(box, ch) {
+      var items = box.querySelectorAll(".d");
+      var cur = items[items.length - 1];
+
+      if (!cur) {
+        box.innerHTML = '<span class="d">' + ch + "</span>";
+        return;
+      }
+      if (cur.textContent === ch) return;
+
+      if (reduce || !cur.animate) {
+        cur.textContent = ch;
+        return;
+      }
+
+      var nu = document.createElement("span");
+      nu.className = "d";
+      nu.textContent = ch;
+      box.appendChild(nu);
+
+      var opt = { duration: DURATION, easing: EASING, fill: "forwards" };
+      cur.animate(
+        [
+          { transform: "translateY(0)", opacity: 1 },
+          { transform: "translateY(-100%)", opacity: 0 },
+        ],
+        opt
+      ).onfinish = function () {
+        cur.remove();
+      };
+      nu.animate(
+        [
+          { transform: "translateY(100%)", opacity: 0 },
+          { transform: "translateY(0)", opacity: 1 },
+        ],
+        opt
+      );
+    }
+  
+    // đặt cả số (tự thêm khung chữ số nếu số dài ra, ví dụ ngày > 99)
+    function setNumber(el, str) {
+      var boxes = el.querySelectorAll(".digit");
+      while (boxes.length < str.length) {
+        var b = document.createElement("span");
+        b.className = "digit";
+        el.appendChild(b);
+        boxes = el.querySelectorAll(".digit");
+      }
+      for (var i = 0; i < boxes.length; i++) {
+        setDigit(boxes[i], str.charAt(i) || "");
+      }
+    }
+
+    // xóa chữ "00" mặc định trong HTML để dựng khung chữ số
+    Object.keys(units).forEach(function (k) {
+      units[k].textContent = "";
+    });
+
+    function tick() {
+      var total = Math.floor(Math.max(0, target - Date.now()) / 1000);
+      setNumber(units.days, pad(Math.floor(total / 86400)));
+      setNumber(units.hours, pad(Math.floor((total % 86400) / 3600)));
+      setNumber(units.minutes, pad(Math.floor((total % 3600) / 60)));
+      setNumber(units.seconds, pad(total % 60));
+    }
+
+    tick();
+    setInterval(tick, 1000);
   })();
 })();
