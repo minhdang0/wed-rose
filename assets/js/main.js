@@ -250,9 +250,6 @@
     render();
   })();
 
-  /* Đếm ngược Save The Date (ngày : giờ : phút : giây, số cuộn như đồng hồ)
-     Dán vào main.js, bên trong IIFE (trước dòng "})();" cuối file),
-     để dùng được hàm $ và biến reduce có sẵn. */
   (function () {
     var units = {
       days: $("cdDays"),
@@ -342,4 +339,131 @@
     tick();
     setInterval(tick, 1000);
   })();
+
+  (function () {
+  var WEDDING_DATE = "2026-10-25"; // năm-tháng-ngày
+ 
+  var cal = $("wedCal");
+  if (!cal) return;
+ 
+  var p = WEDDING_DATE.split("-");
+  var year = +p[0], month = +p[1], day = +p[2];
+
+  var monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  $("calMonth").textContent = monthNames[month - 1];
+  $("calYear").innerHTML = "<span>" + String(year).slice(0, 2) + "</span><span>" + String(year).slice(2) + "</span>";
+
+  // Calendar columns run Sunday through Saturday, matching getDay().
+  var offset = new Date(year, month - 1, 1).getDay();
+  var total = new Date(year, month, 0).getDate();
+ 
+  var html = "";
+  for (var i = 0; i < offset; i++) html += '<span class="cal-day"></span>';
+  for (var d = 1; d <= total; d++) {
+    var date = new Date(year, month - 1, d);
+    var weekday = date.toLocaleDateString("en-US", { weekday: "long" });
+    var classes = "cal-day";
+    if (date.getDay() === 0) classes += " is-sunday";
+    if (d === day) classes += " is-wed";
+    html += '<span class="' + classes + '"' +
+      (d === day ? ' aria-label="' + weekday + ", " + monthNames[month - 1] + " " + d + ", " + year + '"' : "") +
+      ">" + d + "</span>";
+  }
+  cal.querySelector(".cal-days").innerHTML = html;
+})();
+
+    (function () {
+      var map = $("weddingMap");
+      if (!map) return;
+
+      var locations = [
+        {
+          label: "Chú rể",
+          address: "Số 96 Nguyễn Vân Bình, Yên Bắc, Duy Tiên, Hà Nam",
+        },
+        {
+          label: "Cô dâu",
+          address: "Số 96 Nguyễn Vân Bình, Yên Bắc, Duy Tiên, Hà Nam",
+        },
+      ];
+      var frame = $("weddingMapFrame");
+      var address = $("weddingMapAddress");
+      var link = $("weddingMapLink");
+      var tabs = map.querySelectorAll(".map-tab");
+
+      function showLocation(index) {
+        var location = locations[index];
+        var query = encodeURIComponent(location.address);
+        frame.src = "https://www.google.com/maps?q=" + query + "&output=embed";
+        frame.title = "Bản đồ địa điểm - " + location.label;
+        address.textContent = location.address;
+        link.href = "https://www.google.com/maps/search/?api=1&query=" + query;
+
+        tabs.forEach(function (tab, tabIndex) {
+          var selected = tabIndex === index;
+          tab.classList.toggle("active", selected);
+          tab.setAttribute("aria-selected", selected ? "true" : "false");
+        });
+      }
+
+      tabs.forEach(function (tab, index) {
+        tab.addEventListener("click", function () {
+          showLocation(index);
+        });
+      });
+      showLocation(0);
+    })();
+
+    (function () {
+      var form = $("wishForm");
+      if (!form) return;
+
+      var GOOGLE_SHEETS_ENDPOINT = "";
+      var status = $("wishStatus");
+      var submit = $("wishSubmit");
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        status.textContent = "";
+
+        if (!GOOGLE_SHEETS_ENDPOINT) {
+          status.textContent = "Chưa cấu hình địa chỉ Google Sheets để nhận lời chúc.";
+          return;
+        }
+
+        submit.disabled = true;
+        status.textContent = "Đang gửi lời chúc...";
+
+        var payload = {
+          name: $("wishName").value.trim(),
+          message: $("wishMessage").value.trim(),
+          submittedAt: new Date().toISOString(),
+        };
+
+        try {
+          var response = await fetch(GOOGLE_SHEETS_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload),
+          });
+          if (!response.ok) {
+            throw new Error("Google Sheets trả về mã lỗi " + response.status + ".");
+          }
+
+          var result = await response.json();
+          if (!result || result.success !== true) {
+            throw new Error("Google Sheets không xác nhận đã lưu lời chúc.");
+          }
+
+          status.textContent = "Cảm ơn bạn, lời chúc đã được gửi!";
+          form.reset();
+        } catch (error) {
+          console.error("Không thể lưu lời chúc vào Google Sheets:", error);
+          status.textContent = "Gửi lời chúc chưa thành công. Vui lòng thử lại sau.";
+        } finally {
+          submit.disabled = false;
+        }
+      });
+    })();
+
 })();
