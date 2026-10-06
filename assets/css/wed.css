@@ -1830,6 +1830,226 @@ footer .sub {
   color: var(--olive);
 }
 
+/* ---------- Chỉ đường ---------- */
+.invite .inv-map {
+  max-width: 760px;
+  margin: clamp(48px, 10vw, 72px) auto 0;
+  padding: clamp(26px, 6vw, 40px) 0 0;
+  border-top: 1px solid var(--inv-line);
+  text-align: center;
+}
+
+.wishes-map-section {
+  padding-top: clamp(40px, 9vw, 72px);
+}
+
+.wishes-intro {
+  max-width: 420px;
+  margin: 0 auto 26px;
+  padding: 0 12px;
+  text-align: center;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(1.05rem, 4vw, 1.25rem);
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--olive);
+}
+
+.wishes-form {
+  display: grid;
+  gap: 10px;
+  width: min(100%, 460px);
+  margin: 0 auto;
+}
+
+.wishes-form label {
+  margin-top: 8px;
+  text-align: left;
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--olive);
+}
+
+.wishes-form input,
+.wishes-form textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(78, 7, 7, 0.24);
+  border-radius: 0;
+  outline: none;
+  background: rgba(255, 250, 243, 0.48);
+  color: #2a1408;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.1rem;
+  line-height: 1.45;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wishes-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.wishes-form input:focus,
+.wishes-form textarea:focus {
+  border-color: #c9a227;
+  box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.12);
+}
+
+.wishes-submit {
+  justify-self: center;
+  min-width: 180px;
+  margin-top: 12px;
+  padding: 12px 22px;
+  border: 1px solid #c9a227;
+  background: #4e0707;
+  color: #e8d2a0;
+  cursor: pointer;
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease, opacity 0.25s ease;
+}
+
+.wishes-submit:hover,
+.wishes-submit:focus-visible {
+  background: #c9a227;
+  color: #4e0707;
+}
+
+.wishes-submit:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.wishes-status {
+  min-height: 1.5em;
+  margin: 4px 0 0;
+  text-align: center;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1rem;
+  color: var(--olive);
+}
+
+.inv-map .map-title {
+  margin: 4px 0 0;
+  font-family: "Alex Brush", cursive;
+  font-size: clamp(2.4rem, 9vw, 3.4rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: #4e0707;
+}
+
+.inv-map .map-tabs {
+  display: flex;
+  justify-content: center;
+  max-width: 340px;
+  margin: 14px auto 20px;
+}
+
+.inv-map .map-tab {
+  position: relative;
+  flex: 1 1 0;
+  padding: 10px 16px 12px;
+  border: 0;
+  background: transparent;
+  color: rgba(42, 20, 8, 0.58);
+  cursor: pointer;
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: color 0.25s ease;
+}
+
+.inv-map .map-tab + .map-tab {
+  border-left: 1px solid var(--inv-line);
+}
+
+.inv-map .map-tab::after {
+  position: absolute;
+  right: 24%;
+  bottom: 0;
+  left: 24%;
+  height: 1px;
+  background: #c9a227;
+  content: "";
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.inv-map .map-tab.active {
+  color: #4e0707;
+}
+
+.inv-map .map-tab.active::after {
+  transform: scaleX(1);
+}
+
+.inv-map .map-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid rgba(201, 162, 39, 0.55);
+  background: rgba(255, 250, 243, 0.55);
+  box-shadow: 0 12px 30px rgba(42, 20, 8, 0.12);
+}
+
+.inv-map .map-frame::before {
+  position: absolute;
+  z-index: 1;
+  inset: 5px;
+  border: 1px solid rgba(255, 250, 243, 0.72);
+  content: "";
+  pointer-events: none;
+}
+
+.inv-map .map-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  filter: sepia(0.18) saturate(0.86) contrast(0.98);
+}
+
+.inv-map .map-addr {
+  max-width: 520px;
+  margin: 18px auto 0;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(1.05rem, 4vw, 1.3rem);
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--olive);
+}
+
+.inv-map .map-link {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 11px 22px;
+  border: 1px solid rgba(201, 162, 39, 0.8);
+  background: #4e0707;
+  color: #e8d2a0;
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.inv-map .map-link:hover,
+.inv-map .map-link:focus-visible {
+  background: #c9a227;
+  color: #4e0707;
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   .invite .mid-info,
@@ -1930,7 +2150,7 @@ footer .sub {
   font-size: calc(var(--tw) * 0.32);
   line-height: 1;
   letter-spacing: 0.14em;
-  text-indent: 0.14em;  
+  text-indent: 0.14em;
   text-transform: uppercase;
   background: linear-gradient(180deg,
       var(--paper) 0%,
@@ -1960,4 +2180,190 @@ footer .sub {
   font-weight: 500;
   font-size: 1.3em;
   color: var(--olive-2, var(--olive));
+}
+
+/* ================= LỊCH TRỰC TIẾP TRÊN ẢNH ================= */
+.cal-photo {
+  position: relative;
+  width: min(26rem, calc(100% - 60px));
+  height: 37rem;
+  margin: clamp(24px, 6vw, 40px) auto 0;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px rgba(201, 162, 39, .45), 0 18px 40px -18px rgba(46, 4, 4, .6);
+}
+.cal-text {
+  position: absolute;
+  top: 7%;
+  left: 7%;
+  z-index: 1;
+  font-family: "Bonheur Royale", cursive;
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(2.5rem, 9vw, 3.5rem);
+  color: var(--paper);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .7), 0 0 10px rgba(0, 0, 0, .35);
+}
+
+.cal-text::after {
+  content: "";
+  display: block;
+  width: 42%;
+  height: 1px;
+  margin: 2px auto 0;
+  background: linear-gradient(90deg, transparent, rgba(232, 210, 160, .9), transparent);
+}
+.cal-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(.85);
+}
+
+/* chỉ một lớp tối rất nhẹ ở đáy, để ảnh vẫn sáng và rõ */
+.cal-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 45%, rgba(20, 6, 6, .32) 100%);
+}
+
+.cal-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 0 clamp(18px, 11%, 44px) clamp(14px, 4.5vw, 26px);
+  color: var(--paper);
+}
+
+.cal-heading {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 4px 7px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(232, 210, 160, .62);
+}
+
+.cal-month {
+  font-family: "Antonio", sans-serif;
+  font-size: clamp(2.2rem, 10vw, 3.6rem);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .7), 0 0 10px rgba(0, 0, 0, .35);
+}
+
+.cal-year {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-size: clamp(0.72rem, 3vw, 0.9rem);
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: 0.35em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .7), 0 0 10px rgba(0, 0, 0, .35);
+}
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 2px;
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-size: clamp(0.55rem, 2.6vw, 0.68rem);
+  font-weight: 400;
+  text-align: center;
+  color: var(--paper);
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .7), 0 0 10px rgba(0, 0, 0, .35);
+}
+
+.cal-weekdays span:first-child {
+  color: #e8d2a0;
+}
+
+.cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: linear-gradient(
+    180deg,
+    rgba(235, 234, 234, 0.08) 0%,
+    rgba(221, 221, 221, 0.03) 50%,
+    rgba(192, 192, 192, 0.08) 100%
+  );
+}
+
+.cal-day {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1.25;
+  font-family: "Antonio", sans-serif;
+  font-weight: 400;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .7), 0 0 10px rgba(0, 0, 0, .35);
+}
+
+.cal-day.is-wed {
+  z-index: 1;
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.cal-day.is-sunday:not(.is-wed) {
+  color: #e8d2a0;
+}
+
+.cal-day.is-wed::before {
+  content: "";
+  position: absolute;
+  left: 52%;
+  top: 50%;
+  width: 100%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -52%) rotate(20deg);
+  z-index: -1;
+  background-color: var(--olive);
+  -webkit-mask: url("../icon/heart.png") center / contain no-repeat;
+  mask: url("../icon/heart.png") center / contain no-repeat;
+  filter: drop-shadow(0 2px 5px rgba(42, 20, 8, .25));
+}
+
+.title-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 2.4rem;
+}
+
+.t-date-line-1 {
+  font-family: "Corinthia", cursive;
+  font-weight: 400;
+  line-height: 1;
+  display: block;
+  color: var(--olive);
+  font-size: 2.2rem;
+}
+
+.t-date-line-2 {
+   max-width: 360px;
+  margin: 0 auto clamp(18px, 5vw, 28px);
+  padding: 0 24px;
+  text-align: center;
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: clamp(1rem, 3.8vw, 1.25rem);
+  line-height: 1.55;
+  color: #2a1408;
 }
