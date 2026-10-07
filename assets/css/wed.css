@@ -982,13 +982,12 @@ footer .sub {
 /* ================= CHERISHED MOMENTS — CUỘN NGANG ================= */
 .album-scroll {
   position: relative;
-  height: 400vh;
+  height: 400svh;
 }
 
 .album-frame {
   position: sticky;
-  top: 5vh;
-  height: 90vh;
+  top: 5svh;
   height: 90svh;
   overflow: hidden;
   isolation: isolate;
@@ -1253,7 +1252,7 @@ footer .sub {
 
 @media (max-width: 720px) {
   .album-scroll {
-    height: 300vh;
+    height: 300svh;
   }
 }
 
@@ -2367,3 +2366,17 @@ footer .sub {
   line-height: 1.55;
   color: #2a1408;
 }
+
+
+.shine::after,
+.third-card .card-wrap img,
+.third-card .card-wrap::after,
+.first-content span, .last-content span, .last-content span::after,
+.invite .mid-info, .invite .design-mid { animation-play-state: paused; }
+
+.is-visible .shine::after,
+.is-visible .card-wrap img,
+.is-visible .card-wrap::after,
+.is-visible .first-content span, .is-visible .last-content span,
+.is-visible .last-content span::after,
+.is-visible.invite .mid-info, .is-visible.invite .design-mid { animation-play-state: running; }
