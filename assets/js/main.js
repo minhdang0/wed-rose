@@ -227,16 +227,26 @@
     if (!scroller || !frame || !track) return;
 
     let raf = null;
+    let scrollerTop = 0;
+    let total = 0;
+    let topOffset = 0;
+    let maxX = 0;
+
+    function measure() {
+      const rect = scroller.getBoundingClientRect();
+      scrollerTop = rect.top + window.scrollY;
+      total = rect.height - frame.offsetHeight;
+      topOffset = parseFloat(getComputedStyle(frame).top) || 0;
+      maxX = Math.max(0, track.scrollWidth - frame.clientWidth);
+    }
+
     function render() {
       raf = null;
-      const rect = scroller.getBoundingClientRect();
-      const topOffset = parseFloat(getComputedStyle(frame).top) || 0;
-      const total = rect.height - frame.offsetHeight;
+      const rectTop = scrollerTop - window.scrollY;
       const progress =
         total > 0
-          ? Math.min(1, Math.max(0, (topOffset - rect.top) / total))
+          ? Math.min(1, Math.max(0, (topOffset - rectTop) / total))
           : 0;
-      const maxX = Math.max(0, track.scrollWidth - frame.clientWidth);
       track.style.transform = "translate3d(" + -progress * maxX + "px,0,0)";
     }
 
@@ -244,9 +254,15 @@
       if (raf === null) raf = requestAnimationFrame(render);
     }
 
+    function onGeometryChange() {
+      measure();
+      onScroll();
+    }
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    window.addEventListener("load", onScroll);
+    window.addEventListener("resize", onGeometryChange);
+    window.addEventListener("load", onGeometryChange);
+    measure();
     render();
   })();
 
