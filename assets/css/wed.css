@@ -2368,13 +2368,11 @@ footer .sub {
 }
 
 
-.shine::after,
 .third-card .card-wrap img,
 .third-card .card-wrap::after,
 .first-content span, .last-content span, .last-content span::after,
 .invite .mid-info, .invite .design-mid { animation-play-state: paused; }
 
-.is-visible .shine::after,
 .is-visible .card-wrap img,
 .is-visible .card-wrap::after,
 .is-visible .first-content span, .is-visible .last-content span,
