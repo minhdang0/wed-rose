@@ -4,32 +4,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Thiệp Cưới — Hoàng Vinh &amp; Nguyễn Nhung | 25.10.2026</title>
-  <meta name="description" content="Hoàng Vinh & Nguyễn Nhung — 25 tháng 10, 2026, GEM Center, TP. Hồ Chí Minh." />
+  <title data-wedding="site.title">Thiệp Cưới — Hoàng Vinh &amp; Nguyễn Nhung | 25.10.2026</title>
+  <meta name="description" data-wedding-content="site.description"
+    content="Hoàng Vinh & Nguyễn Nhung — 25 tháng 10, 2026, GEM Center, TP. Hồ Chí Minh." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Antonio:wght@100..700&family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&family=Be+Vietnam+Pro:wght@200;300;400;500&family=Corinthia:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Send+Flowers&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Antonio:wght@100..700&family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&family=Be+Vietnam+Pro:wght@200;300;400;500&family=Birthstone&family=Bonheur+Royale&family=Corinthia:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Ms+Madi&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Send+Flowers&family=Tangerine:wght@400;700&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="./assets/css/main.css" />
   <link rel="stylesheet" href="./assets/css/wed.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Birthstone&family=Bonheur+Royale&family=Ms+Madi&family=Send+Flowers&family=Tangerine:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
   <!-- ============ MÀN MỞ — PHONG BÌ ============ -->
   <div class="gate" id="gate">
     <div class="env-wrap">
-      <div class="envelope" id="envelope">
+      <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Chạm để mở thiệp">
         <div class="env-body"></div>
+
+        <div class="env-letter">
+          <img data-wedding-src="images.envelope" src="./assets/icon/couple.png" alt="Cô dâu và chú rể" />
+        </div>
+
+        <div class="env-front">
+          <p>Let's See Our Wedding</p>
+        </div>
         <div class="env-flap"></div>
-        <div class="seal">H&nbsp;L</div>
       </div>
+
       <div class="to">Thân mời <b id="gateGuest">Quý Khách</b></div>
-      <h1 class="gnames">Hoàng Vinh<em>&amp;</em>Nguyễn Nhung</h1>
-      <div class="gdate">25 · 10 · 2026</div>
-      <button class="gate-btn" id="openBtn">Chạm để mở thiệp</button>
+      <div class="gnames">
+        <p data-wedding="couple.groom">Hoàng Vinh</p>
+        <p><em>&amp;</em></p>
+        <p data-wedding="couple.bride">Nguyễn Nhung</p>
+      </div>
+      <div class="gdate" data-wedding="couple.dateDisplay">25 · 10 · 2026</div>
     </div>
   </div>
 
@@ -56,11 +67,11 @@
     <div class="hero-names rv d3">
       <div class="hn-groom">
         <span>GROOM</span>
-        <span>Hoàng Vinh</span>
+        <span data-wedding="couple.groom">Hoàng Vinh</span>
       </div>
       <div class="hn-bride">
         <span>BRIDE</span>
-        <span>Nguyễn Nhung</span>
+        <span data-wedding="couple.bride">Nguyễn Nhung</span>
       </div>
     </div>
   </header>
@@ -77,7 +88,7 @@
         <span class="corner tr"></span>
         <span class="corner bl"></span>
         <span class="corner br"></span>
-        <img src="./assets/img/image1.jpg" />
+        <img data-wedding-src="images.introduction" src="./assets/img/image1.jpg" alt="" />
         <span class="frame-label fl-top">Save the date</span>
         <span class="frame-label fl-bottom">Save the date</span>
         <span class="frame-label fl-left">Save the date</span>
@@ -108,7 +119,7 @@
           </p>
         </div>
         <div class="img-groom-wrap">
-          <img src="./assets/img/groom.jpg" alt="groom" />
+          <img data-wedding-src="images.groom" src="./assets/img/groom.jpg" alt="groom" />
         </div>
       </div>
       <div class="letter-divider" aria-hidden="true">
@@ -160,7 +171,7 @@
       </div>
       <div class="bride-letter io">
         <div class="img-bride-wrap">
-          <img src="./assets/img/bride.jpg" alt="bride" />
+          <img data-wedding-src="images.bride" src="./assets/img/bride.jpg" alt="bride" />
         </div>
         <div class="letter-media bride-media">
           <div class="streak-color" aria-hidden="true"></div>
@@ -189,22 +200,22 @@
         <div class="sf-edge sf-t">
           <span><i class="rec"></i>REC</span>
           <span>SAVE THE DATE</span>
-          <span>25.10.2026</span>
+          <span data-wedding="couple.dateCompact">25.10.2026</span>
         </div>
         <div class="sf-edge sf-b">
-          <span>GEM CENTER</span>
-          <span>HO CHI MINH CITY</span>
+          <span data-wedding="event.venue">GEM CENTER</span>
+          <span data-wedding="event.city">HO CHI MINH CITY</span>
           <span id="storyCount">01 / 04</span>
         </div>
         <div class="sf-edge sf-l">
           <span>OUR LOVE STORY</span>
-          <span>2021 - 2026</span>
-          <span>FOREVER</span>   
+          <span data-wedding="couple.yearRange">2021 - 2026</span>
+          <span>FOREVER</span>
         </div>
         <div class="sf-edge sf-r">
-          <span>HOANG VINH</span>
+          <span data-wedding="couple.groom">HOANG VINH</span>
           <span>&amp;</span>
-          <span>NGUYEN NHUNG</span>
+          <span data-wedding="couple.bride">NGUYEN NHUNG</span>
         </div>
 
         <div class="story-card" id="storyCard">
@@ -231,13 +242,13 @@
         <div class="album-track" id="albumTrack">
           <div class="panel first-card">
             <div class="shot p1-a shine">
-              <img src="./assets/img/image7.jpg" alt="" />
+              <img data-wedding-src="images.gallery.0" src="./assets/img/image7.jpg" alt="" />
             </div>
             <div class="shot p1-b shine" style="--delay: 1.5s">
-              <img src="./assets/img/image8.jpg" alt="" />
+              <img data-wedding-src="images.gallery.1" src="./assets/img/image8.jpg" alt="" />
             </div>
             <div class="shot p1-c shine" style="--delay: 1.5s">
-              <img src="./assets/img/image9.jpg" alt="" />
+              <img data-wedding-src="images.gallery.2" src="./assets/img/image9.jpg" alt="" />
             </div>
             <div class="shot p1-d">
               <span>Together Forever</span>
@@ -256,13 +267,13 @@
 
           <div class="panel second-card">
             <div class="shot p2-a shine" style="--delay: 0.8s">
-              <img src="./assets/img/image10.jpg" alt="" />
+              <img data-wedding-src="images.gallery.3" src="./assets/img/image10.jpg" alt="" />
             </div>
             <div class="shot p2-b shine" style="--delay: 2.2s">
-              <img src="./assets/img/image11.jpg" alt="" />
+              <img data-wedding-src="images.gallery.4" src="./assets/img/image11.jpg" alt="" />
             </div>
             <div class="shot p2-c shine" style="--delay: 2.2s">
-              <img src="./assets/img/image12.jpg" alt="" />
+              <img data-wedding-src="images.gallery.5" src="./assets/img/image12.jpg" alt="" />
             </div>
             <div class="shot p2-d">
               <span>Cherish</span>
@@ -305,16 +316,16 @@
               </p>
             </div>
             <div class="card-wrap">
-              <img src="./assets/img/image13.jpg" alt="" />
+              <img data-wedding-src="images.gallery.6" src="./assets/img/image13.jpg" alt="" />
             </div>
             <div class="card-wrap img-tlr">
-              <img src="./assets/img/image14.jpg" alt="" />
+              <img data-wedding-src="images.gallery.7" src="./assets/img/image14.jpg" alt="" />
             </div>
             <div class="card-wrap img-btl">
-              <img src="./assets/img/image15.jpg" alt="" />
+              <img data-wedding-src="images.gallery.8" src="./assets/img/image15.jpg" alt="" />
             </div>
             <div class="card-wrap">
-              <img src="./assets/img/image16.jpg" alt="" />
+              <img data-wedding-src="images.gallery.9" src="./assets/img/image16.jpg" alt="" />
             </div>
             <div class="card-wrap card-content last-content">
               <span>Forever</span>
@@ -340,36 +351,37 @@
     <div class="wed-info io">
       <div class="groom-info">
         <h3>Nhà trai</h3>
-        <p>Nguyễn Văn Hùng<br />Trần Thị Lan</p>
-        <p>Số 96 Nguyễn Vân Bình,<br />Yên Bắc Duy Tiên Hà Nam</p>
+        <p data-wedding-lines="families.groom.names"><span>Nguyễn Văn Hùng</span><br /><span>Trần Thị Lan</span></p>
+        <p data-wedding-lines="families.groom.address"><span>Số 96 Nguyễn Vân Bình,</span><br /><span>Yên Bắc Duy Tiên Hà Nam</span></p>
       </div>
       <div class="bride-info">
         <h3>Nhà gái</h3>
-        <p>Nguyễn Văn Hùng<br />Trần Thị Lan</p>
-        <p>Số 96 Nguyễn Vân Bình,<br />Yên Bắc Duy Tiên Hà Nam</p>
+        <p data-wedding-lines="families.bride.names"><span>Nguyễn Văn Hùng</span><br /><span>Trần Thị Lan</span></p>
+        <p data-wedding-lines="families.bride.address"><span>Số 96 Nguyễn Vân Bình,</span><br /><span>Yên Bắc Duy Tiên Hà Nam</span></p>
       </div>
     </div>
 
     <div class="inv-event io">
       <p class="inv-label">
-        Thông tin tiệc cưới<br />Tiệc cưới sẽ diễn ra vào lúc
+        Thông tin tiệc cưới<br />
+        Tiệc cưới sẽ diễn ra vào lúc
       </p>
-      <div class="inv-time">10:30</div>
+      <div class="inv-time" data-wedding="event.time">10:30</div>
 
       <div class="inv-date">
-        <span class="inv-side inv-side-l">Chủ nhật</span>
-        <span class="inv-day">25</span>
-        <span class="inv-side inv-side-r">Tháng 10</span>
+        <span class="inv-side inv-side-l" data-wedding="event.weekday">Chủ nhật</span>
+        <span class="inv-day" data-wedding="event.day">25</span>
+        <span class="inv-side inv-side-r" data-wedding="event.month">Tháng 10</span>
       </div>
-      <p class="inv-year">2026</p>
-      <p class="inv-lunar">(Tức ngày 15/9 Bính Ngọ)</p>
+      <p class="inv-year" data-wedding="event.year">2026</p>
+      <p class="inv-lunar" data-wedding="event.lunarDate">(Tức ngày 15/9 Bính Ngọ)</p>
 
       <div class="inv-schedule">
-        <div class="inv-slot">
+        <div class="inv-slot" data-wedding-schedule="0">
           <h3>Đón khách</h3>
           <p>17:00</p>
         </div>
-        <div class="inv-slot">
+        <div class="inv-slot" data-wedding-schedule="1">
           <h3>Khai tiệc</h3>
           <p>18:30</p>
         </div>
@@ -388,34 +400,34 @@
       <p class="time-note" id="cdNote">Hãy cùng đếm ngược cùng chúng mình nhé</p>
       <div class="time-count" role="timer" aria-label="Countdown to the wedding">
         <div class="time-item" aria-label="Days">
-          <img src="./assets/img/image13.jpg" alt="" />
+          <img data-wedding-src="images.countdown.0" src="./assets/img/image13.jpg" alt="" />
           <span class="time-label" aria-hidden="true">Days</span>
           <span class="time-num" id="cdDays">00</span>
         </div>
         <div class="time-item" aria-label="Hours">
-          <img src="./assets/img/image14.jpg" alt="" />
+          <img data-wedding-src="images.countdown.1" src="./assets/img/image14.jpg" alt="" />
           <span class="time-label" aria-hidden="true">Hours</span>
           <span class="time-num" id="cdHours">00</span>
         </div>
         <div class="time-item" aria-label="Minutes">
-          <img src="./assets/img/image15.jpg" alt="" />
+          <img data-wedding-src="images.countdown.2" src="./assets/img/image15.jpg" alt="" />
           <span class="time-label" aria-hidden="true">Minutes</span>
 
           <span class="time-num" id="cdMinutes">00</span>
         </div>
         <div class="time-item" aria-label="Seconds">
-          <img src="./assets/img/image16.jpg" alt="" />
+          <img data-wedding-src="images.countdown.3" src="./assets/img/image16.jpg" alt="" />
           <span class="time-label" aria-hidden="true">Seconds</span>
           <span class="time-num" id="cdSeconds">00</span>
         </div>
       </div>
     </div>
     <div class="title-date">
-      <h2 class="t-date-line-1">Hoàng Vinh - Nguyễn Nhung</h2>
+      <h2 class="t-date-line-1"><span data-wedding="couple.groom">Hoàng Vinh</span> - <span data-wedding="couple.bride">Nguyễn Nhung</span></h2>
       <p class="t-date-line-2">Are getting married</p>
     </div>
     <div class="cal-photo io" id="wedCal">
-      <img src="./assets/img/hero3.jpg" alt="" />
+      <img data-wedding-src="images.calendar" src="./assets/img/hero3.jpg" alt="" />
       <div class="cal-text"><span>Happiness</span></div>
       <div class="cal-panel">
         <div class="cal-heading">
@@ -458,16 +470,12 @@
       <p class="inv-label">Vị trí buổi lễ</p>
       <h3 class="map-title">Find Us</h3>
       <div class="map-tabs" role="tablist" aria-label="Chọn địa điểm">
-        <button   ss="map-tab active" type="button" role="tab" aria-selected="true" data-map-index="0">Chú rể</button>
-        <button class="map-tab" type="button" role="tab" aria-selected="false" data-map-index="1">Cô dâu</button>
+        <button class="map-tab active" type="button" role="tab" aria-selected="true" data-map-index="0"></button>
+        <button class="map-tab" type="button" role="tab" aria-selected="false" data-map-index="1"></button>
       </div>
       <div class="map-frame">
-        <iframe
-          id="weddingMapFrame"
-          title="Bản đồ địa điểm cưới"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          allowfullscreen>
+        <iframe id="weddingMapFrame" title="Bản đồ địa điểm cưới" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade" allowfullscreen>
         </iframe>
       </div>
       <p class="map-addr" id="weddingMapAddress"></p>
@@ -475,18 +483,18 @@
         Mở trong Google Maps
       </a>
     </div>
-  </section>        
+  </section>
   <footer>
     <div class="wrap io">
       <div class="big script">Thank You</div>
-      <div class="sub">Hoàng Vinh &amp; Nguyễn Nhung · 25 · 10 · 2026</div>
+      <div class="sub"><span data-wedding="couple.groom">Hoàng Vinh</span> &amp; <span data-wedding="couple.bride">Nguyễn Nhung</span> · <span data-wedding="couple.dateDisplay">25 · 10 · 2026</span></div>
     </div>
   </footer>
 
-  <audio id="weddingMusic" src="./assets/sound/music.mp3" loop preload="none"></audio>
+  <audio id="weddingMusic" data-wedding-src="music.audio" src="./assets/sound/music.mp3" loop preload="none"></audio>
   <button class="music-toggle" id="musicToggle" type="button" aria-label="Bật nhạc" aria-pressed="false"
     title="Bật nhạc">
-    <img src="./assets/icon/music-note.png" alt="" />
+    <img data-wedding-src="music.icon" src="./assets/icon/music-note.png" alt="" />
   </button>
 
   <script src="assets/js/main.js"></script>
