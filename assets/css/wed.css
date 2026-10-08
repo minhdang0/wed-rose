@@ -163,6 +163,129 @@ section {
   color: #4e0707;
 }
 
+/* ================= NÚT NHẠC — luôn ở góc dưới phải ================= */
+.music-toggle {
+  position: fixed;
+  z-index: 100;
+  right: calc(12px + env(safe-area-inset-right, 0px));
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(201, 162, 39, 0.75);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, #7a1414 0%, #4e0707 70%);
+  box-shadow:
+    0 3px 10px rgba(42, 20, 8, 0.35),
+    inset 0 1px 1px rgba(255, 246, 214, 0.25);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: scale(0.8);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s,
+    box-shadow 0.3s ease;
+}
+
+body.opened .music-toggle {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+body.opened .music-toggle:hover {
+  transform: scale(1.08);
+  box-shadow:
+    0 4px 14px rgba(42, 20, 8, 0.45),
+    0 0 10px rgba(201, 162, 39, 0.55),
+    inset 0 1px 1px rgba(255, 246, 214, 0.25);
+}
+
+body.opened .music-toggle:active {
+  transform: scale(0.94);
+}
+
+.music-toggle img {
+  position: relative;
+  z-index: 1;
+  width: 15px;
+  height: 15px;
+  object-fit: contain;
+  filter: invert(1) sepia(1) saturate(2) hue-rotate(3deg);
+  animation: music-note-spin 4s linear infinite;
+  animation-play-state: paused;
+}
+
+.music-toggle.is-playing img {
+  animation-play-state: running;
+}
+
+/* vòng sáng lan toả khi đang phát nhạc */
+.music-toggle::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 162, 39, 0.8);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.music-toggle.is-playing::before {
+  animation: music-ripple 2s ease-out infinite;
+}
+
+/* gạch chéo khi đang tắt nhạc */
+.music-toggle::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: 20px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: #e8d2a0;
+  box-shadow: 0 0 0 1px rgba(78, 7, 7, 0.9);
+  transform: rotate(-45deg);
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.music-toggle.is-playing::after {
+  opacity: 0;
+}
+
+.music-toggle:focus-visible {
+  outline: 2px solid #c9a227;
+  outline-offset: 3px;
+}
+
+@keyframes music-note-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes music-ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.75);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-toggle img,
+  .music-toggle.is-playing::before {
+    animation: none;
+  }
+}
 /* ================= HERO ================= */
 .hero {
   position: relative;
