@@ -7,22 +7,35 @@
     }
     weddingData = await response.json();
   } catch (error) {
-    console.error("Không thể tải dữ liệu thiệp cưới từ assets/data/wedding.json:", error);
+    console.error(
+      "Không thể tải dữ liệu thiệp cưới từ assets/data/wedding.json:",
+      error,
+    );
     return;
   }
 
-  if (!weddingData || !weddingData.event || !weddingData.couple ||
-      !Array.isArray(weddingData.story) || !weddingData.story.length ||
-      !Array.isArray(weddingData.event.schedule) ||
-      !Array.isArray(weddingData.locations) || !weddingData.locations.length) {
+  if (
+    !weddingData ||
+    !weddingData.event ||
+    !weddingData.couple ||
+    !Array.isArray(weddingData.story) ||
+    !weddingData.story.length ||
+    !Array.isArray(weddingData.event.schedule) ||
+    !Array.isArray(weddingData.locations) ||
+    !weddingData.locations.length
+  ) {
     console.error("Thiếu dữ liệu bắt buộc trong assets/data/wedding.json.");
     return;
   }
 
   const eventDate = /^(\d{4})-(\d{2})-(\d{2})$/.exec(weddingData.event.date);
-  const countdownTime = /^(\d{2}):(\d{2})$/.exec(weddingData.event.countdownTime);
+  const countdownTime = /^(\d{2}):(\d{2})$/.exec(
+    weddingData.event.countdownTime,
+  );
   if (!eventDate || !countdownTime) {
-    console.error("Ngày cưới hoặc giờ đếm ngược trong wedding.json không hợp lệ.");
+    console.error(
+      "Ngày cưới hoặc giờ đếm ngược trong wedding.json không hợp lệ.",
+    );
     return;
   }
 
@@ -32,34 +45,74 @@
   const hours = Number(countdownTime[1]);
   const minutes = Number(countdownTime[2]);
   const calendarDate = new Date(Date.UTC(Number(year), month - 1, day));
-  if (month < 1 || month > 12 || day < 1 || day > 31 ||
-      calendarDate.getUTCFullYear() !== Number(year) ||
-      calendarDate.getUTCMonth() !== month - 1 ||
-      calendarDate.getUTCDate() !== day ||
-      hours > 23 || minutes > 59) {
-    console.error("Ngày cưới hoặc giờ đếm ngược trong wedding.json không hợp lệ.");
+  if (
+    month < 1 ||
+    month > 12 ||
+    day < 1 ||
+    day > 31 ||
+    calendarDate.getUTCFullYear() !== Number(year) ||
+    calendarDate.getUTCMonth() !== month - 1 ||
+    calendarDate.getUTCDate() !== day ||
+    hours > 23 ||
+    minutes > 59
+  ) {
+    console.error(
+      "Ngày cưới hoặc giờ đếm ngược trong wedding.json không hợp lệ.",
+    );
     return;
   }
 
   const monthNames = [
-    "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
-    "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12",
+    "Tháng 1",
+    "Tháng 2",
+    "Tháng 3",
+    "Tháng 4",
+    "Tháng 5",
+    "Tháng 6",
+    "Tháng 7",
+    "Tháng 8",
+    "Tháng 9",
+    "Tháng 10",
+    "Tháng 11",
+    "Tháng 12",
   ];
-  weddingData.couple.dateDisplay = String(day).padStart(2, "0") + " · " +
-    String(month).padStart(2, "0") + " · " + year;
-  weddingData.couple.dateCompact = String(day).padStart(2, "0") + "." +
-    String(month).padStart(2, "0") + "." + year;
+  weddingData.couple.dateDisplay =
+    String(day).padStart(2, "0") +
+    " · " +
+    String(month).padStart(2, "0") +
+    " · " +
+    year;
+  weddingData.couple.dateCompact =
+    String(day).padStart(2, "0") +
+    "." +
+    String(month).padStart(2, "0") +
+    "." +
+    year;
   weddingData.event.dateHuman = day + " tháng " + month + ", " + year;
-  weddingData.couple.yearRange = weddingData.story[0].year + " - " +
+  weddingData.couple.yearRange =
+    weddingData.story[0].year +
+    " - " +
     weddingData.story[weddingData.story.length - 1].year;
   weddingData.event.day = String(day);
   weddingData.event.month = monthNames[month - 1];
   weddingData.event.year = year;
-  weddingData.event.weekday = new Date(weddingData.event.date + "T12:00:00+07:00")
-    .toLocaleDateString("vi-VN", { weekday: "long", timeZone: "Asia/Ho_Chi_Minh" })
-    .replace(/^./, function (letter) { return letter.toUpperCase(); });
-  weddingData.event.dateTime = weddingData.event.date + "T" +
-    countdownTime[1] + ":" + countdownTime[2] + ":00+07:00";
+  weddingData.event.weekday = new Date(
+    weddingData.event.date + "T12:00:00+07:00",
+  )
+    .toLocaleDateString("vi-VN", {
+      weekday: "long",
+      timeZone: "Asia/Ho_Chi_Minh",
+    })
+    .replace(/^./, function (letter) {
+      return letter.toUpperCase();
+    });
+  weddingData.event.dateTime =
+    weddingData.event.date +
+    "T" +
+    countdownTime[1] +
+    ":" +
+    countdownTime[2] +
+    ":00+07:00";
 
   const templateValues = {
     groom: weddingData.couple.groom,
@@ -77,7 +130,9 @@
     });
   }
   weddingData.site.title = renderTemplate(weddingData.site.titleTemplate);
-  weddingData.site.description = renderTemplate(weddingData.site.descriptionTemplate);
+  weddingData.site.description = renderTemplate(
+    weddingData.site.descriptionTemplate,
+  );
 
   function getWeddingValue(path) {
     return path.split(".").reduce(function (value, key) {
@@ -90,43 +145,68 @@
     if (typeof value === "string" || typeof value === "number") {
       element.textContent = value;
     } else {
-      console.error("Không tìm thấy dữ liệu thiệp cưới:", element.getAttribute("data-wedding"));
+      console.error(
+        "Không tìm thấy dữ liệu thiệp cưới:",
+        element.getAttribute("data-wedding"),
+      );
     }
   });
 
-  document.querySelectorAll("[data-wedding-content]").forEach(function (element) {
-    const value = getWeddingValue(element.getAttribute("data-wedding-content"));
-    if (typeof value === "string") element.setAttribute("content", value);
-    else console.error("Không tìm thấy dữ liệu thiệp cưới:", element.getAttribute("data-wedding-content"));
-  });
+  document
+    .querySelectorAll("[data-wedding-content]")
+    .forEach(function (element) {
+      const value = getWeddingValue(
+        element.getAttribute("data-wedding-content"),
+      );
+      if (typeof value === "string") element.setAttribute("content", value);
+      else
+        console.error(
+          "Không tìm thấy dữ liệu thiệp cưới:",
+          element.getAttribute("data-wedding-content"),
+        );
+    });
 
   document.querySelectorAll("[data-wedding-src]").forEach(function (element) {
     const value = getWeddingValue(element.getAttribute("data-wedding-src"));
     if (typeof value === "string" && value) element.setAttribute("src", value);
-    else console.error("Đường dẫn ảnh/âm thanh không hợp lệ:", element.getAttribute("data-wedding-src"));
+    else
+      console.error(
+        "Đường dẫn ảnh/âm thanh không hợp lệ:",
+        element.getAttribute("data-wedding-src"),
+      );
   });
 
   document.querySelectorAll("[data-wedding-lines]").forEach(function (element) {
     const values = getWeddingValue(element.getAttribute("data-wedding-lines"));
     const lines = element.querySelectorAll("span");
     if (!Array.isArray(values) || values.length !== lines.length) {
-      console.error("Dữ liệu các dòng không khớp:", element.getAttribute("data-wedding-lines"));
+      console.error(
+        "Dữ liệu các dòng không khớp:",
+        element.getAttribute("data-wedding-lines"),
+      );
       return;
     }
-    lines.forEach(function (line, index) { line.textContent = values[index]; });
+    lines.forEach(function (line, index) {
+      line.textContent = values[index];
+    });
   });
 
-  document.querySelectorAll("[data-wedding-schedule]").forEach(function (element) {
-    const schedule = weddingData.event.schedule[Number(element.getAttribute("data-wedding-schedule"))];
-    const label = element.querySelector("h3");
-    const time = element.querySelector("p");
-    if (!schedule || !label || !time) {
-      console.error("Dữ liệu lịch tiệc không khớp với cấu trúc HTML.");
-      return;
-    }
-    label.textContent = schedule.label;
-    time.textContent = schedule.time;
-  });
+  document
+    .querySelectorAll("[data-wedding-schedule]")
+    .forEach(function (element) {
+      const schedule =
+        weddingData.event.schedule[
+          Number(element.getAttribute("data-wedding-schedule"))
+        ];
+      const label = element.querySelector("h3");
+      const time = element.querySelector("p");
+      if (!schedule || !label || !time) {
+        console.error("Dữ liệu lịch tiệc không khớp với cấu trúc HTML.");
+        return;
+      }
+      label.textContent = schedule.label;
+      time.textContent = schedule.time;
+    });
 
   document.querySelectorAll(".map-tab").forEach(function (tab, index) {
     const location = weddingData.locations[index];
@@ -292,12 +372,12 @@
   /* our love story */
   (function () {
     var storyData = weddingData.story.map(function (story) {
-    return {
-      year: story.year,
-      title: story.title,
-      text: story.text,
-      img: story.image,
-    };
+      return {
+        year: story.year,
+        title: story.title,
+        text: story.text,
+        img: story.image,
+      };
     });
 
     var stage = $("storyStage");
@@ -333,7 +413,9 @@
         halves.map(function (el) {
           return el.animate(
             [
-              { transform: "perspective(1200px) rotateX(" + from * dir + "deg)" },
+              {
+                transform: "perspective(1200px) rotateX(" + from * dir + "deg)",
+              },
               { transform: "perspective(1200px) rotateX(" + to * dir + "deg)" },
             ],
             { duration: ms, easing: easing, fill: "both" },
@@ -359,7 +441,9 @@
 
       await pivot(0, 90, 550, "cubic-bezier(0.5, 0, 0.9, 0.6)", dir);
       render(n);
-      try { await $("storyImg").decode(); } catch (e) { }
+      try {
+        await $("storyImg").decode();
+      } catch (e) {}
       await pivot(-90, 0, 650, "cubic-bezier(0.1, 0.4, 0.3, 1)", dir);
       current = n;
       busy = false;
@@ -367,11 +451,15 @@
 
     function startTimer() {
       clearInterval(timer);
-      timer = setInterval(function () { next(false); }, 5000);
+      timer = setInterval(function () {
+        next(false);
+      }, 5000);
     }
 
     render(0);
-    stage.addEventListener("click", function () { next(true); });
+    stage.addEventListener("click", function () {
+      next(true);
+    });
     startTimer();
   })();
 
@@ -400,9 +488,7 @@
       raf = null;
       const rectTop = scrollerTop - window.scrollY;
       const progress =
-        total > 0
-          ? Math.min(1, Math.max(0, (topOffset - rectTop) / total))
-          : 0;
+        total > 0 ? Math.min(1, Math.max(0, (topOffset - rectTop) / total)) : 0;
       track.style.transform = "translate3d(" + -progress * maxX + "px,0,0)";
     }
 
@@ -429,7 +515,9 @@
       minutes: $("cdMinutes"),
       seconds: $("cdSeconds"),
     };
-    var ok = Object.keys(units).every(function (k) { return units[k]; });
+    var ok = Object.keys(units).every(function (k) {
+      return units[k];
+    });
     if (!ok) return;
 
     // Đổi ngày giờ ở đây (+07:00 = giờ Việt Nam)
@@ -468,7 +556,7 @@
           { transform: "translateY(0)", opacity: 1 },
           { transform: "translateY(-100%)", opacity: 0 },
         ],
-        opt
+        opt,
       ).onfinish = function () {
         cur.remove();
       };
@@ -477,7 +565,7 @@
           { transform: "translateY(100%)", opacity: 0 },
           { transform: "translateY(0)", opacity: 1 },
         ],
-        opt
+        opt,
       );
     }
 
@@ -519,11 +607,31 @@
     if (!cal) return;
 
     var p = WEDDING_DATE.split("-");
-    var year = +p[0], month = +p[1], day = +p[2];
+    var year = +p[0],
+      month = +p[1],
+      day = +p[2];
 
-    var monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    var monthNames = [
+      "JAN",
+      "FEB",
+      "MAR",
+      "APR",
+      "MAY",
+      "JUN",
+      "JUL",
+      "AUG",
+      "SEP",
+      "OCT",
+      "NOV",
+      "DEC",
+    ];
     $("calMonth").textContent = monthNames[month - 1];
-    $("calYear").innerHTML = "<span>" + String(year).slice(0, 2) + "</span><span>" + String(year).slice(2) + "</span>";
+    $("calYear").innerHTML =
+      "<span>" +
+      String(year).slice(0, 2) +
+      "</span><span>" +
+      String(year).slice(2) +
+      "</span>";
 
     // Calendar columns run Sunday through Saturday, matching getDay().
     var offset = new Date(year, month - 1, 1).getDay();
@@ -537,9 +645,24 @@
       var classes = "cal-day";
       if (date.getDay() === 0) classes += " is-sunday";
       if (d === day) classes += " is-wed";
-      html += '<span class="' + classes + '"' +
-        (d === day ? ' aria-label="' + weekday + ", " + monthNames[month - 1] + " " + d + ", " + year + '"' : "") +
-        ">" + d + "</span>";
+      html +=
+        '<span class="' +
+        classes +
+        '"' +
+        (d === day
+          ? ' aria-label="' +
+            weekday +
+            ", " +
+            monthNames[month - 1] +
+            " " +
+            d +
+            ", " +
+            year +
+            '"'
+          : "") +
+        ">" +
+        d +
+        "</span>";
     }
     cal.querySelector(".cal-days").innerHTML = html;
   })();
@@ -590,7 +713,8 @@
       status.textContent = "";
 
       if (!GOOGLE_SHEETS_ENDPOINT) {
-        status.textContent = "Chưa cấu hình địa chỉ Google Sheets để nhận lời chúc.";
+        status.textContent =
+          "Chưa cấu hình địa chỉ Google Sheets để nhận lời chúc.";
         return;
       }
 
@@ -610,7 +734,9 @@
           body: JSON.stringify(payload),
         });
         if (!response.ok) {
-          throw new Error("Google Sheets trả về mã lỗi " + response.status + ".");
+          throw new Error(
+            "Google Sheets trả về mã lỗi " + response.status + ".",
+          );
         }
 
         var result = await response.json();
@@ -622,11 +748,11 @@
         form.reset();
       } catch (error) {
         console.error("Không thể lưu lời chúc vào Google Sheets:", error);
-        status.textContent = "Gửi lời chúc chưa thành công. Vui lòng thử lại sau.";
+        status.textContent =
+          "Gửi lời chúc chưa thành công. Vui lòng thử lại sau.";
       } finally {
         submit.disabled = false;
       }
     });
   })();
-
 })();

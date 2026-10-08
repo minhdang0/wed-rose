@@ -1,0 +1,97 @@
+{
+  "site": {
+    "titleTemplate": "Thiệp Cưới — {groom} & {bride} | {dateCompact}",
+    "descriptionTemplate": "{groom} & {bride} — {dateHuman}, {venue}, {city}."
+  },
+  "couple": {
+    "groom": "Hoàng Vinh",
+    "bride": "Nguyễn Nhung"
+  },
+  "images": {
+    "envelope": "./assets/icon/couple.png",
+    "introduction": "./assets/img/image1.jpg",
+    "groom": "./assets/img/groom.jpg",
+    "bride": "./assets/img/bride.jpg",
+    "gallery": [
+      "./assets/img/image7.jpg",
+      "./assets/img/image8.jpg",
+      "./assets/img/image9.jpg",
+      "./assets/img/image10.jpg",
+      "./assets/img/image11.jpg",
+      "./assets/img/image12.jpg",
+      "./assets/img/image13.jpg",
+      "./assets/img/image14.jpg",
+      "./assets/img/image15.jpg",
+      "./assets/img/image16.jpg"
+    ],
+    "countdown": [
+      "./assets/img/image13.jpg",
+      "./assets/img/image14.jpg",
+      "./assets/img/image15.jpg",
+      "./assets/img/image16.jpg"
+    ],
+    "calendar": "./assets/img/hero3.jpg"
+  },
+  "families": {
+    "groom": {
+      "names": ["Nguyễn Văn Hùng", "Trần Thị Lan"],
+      "address": ["Số 96 Nguyễn Vân Bình,", "Yên Bắc Duy Tiên Hà Nam"]
+    },
+    "bride": {
+      "names": ["Nguyễn Văn Hùng", "Trần Thị Lan"],
+      "address": ["Số 96 Nguyễn Vân Bình,", "Yên Bắc Duy Tiên Hà Nam"]
+    }
+  },
+  "event": {
+    "date": "2026-10-25",
+    "countdownTime": "09:00",
+    "lunarDate": "(Tức ngày 15/9 Bính Ngọ)",
+    "time": "10:30",
+    "venue": "GEM Center",
+    "city": "Hà Nam",
+    "schedule": [
+      { "label": "Đón khách", "time": "17:00" },
+      { "label": "Khai tiệc", "time": "18:30" }
+    ]
+  },
+  "music": {
+    "audio": "./assets/sound/music.mp3",
+    "icon": "./assets/icon/music-note.png"
+  },
+  "story": [
+    {
+      "year": "2021",
+      "title": "Gặp nhau",
+      "text": "Một chiều thu Hà Nội, quán cà phê nhỏ trên phố Nguyễn Hữu Huân, và một cuốn sách để quên.",
+      "image": "./assets/img/image2.jpg"
+    },
+    {
+      "year": "2023",
+      "title": "Cùng đi xa",
+      "text": "Chuyến Đà Lạt đầu tiên, chiếc xe máy cũ và một cơn mưa bất chợt. Từ hôm đó mọi kế hoạch đều có hai người.",
+      "image": "./assets/img/image3.jpg"
+    },
+    {
+      "year": "2024",
+      "title": "Lời cầu hôn",
+      "text": "Dưới ánh đèn thành phố, một câu hỏi giản dị và một cái gật đầu đầy nước mắt.",
+      "image": "./assets/img/image4.jpg"
+    },
+    {
+      "year": "2026",
+      "title": "Về chung một nhà",
+      "text": "Và rất mong có bạn ở đó, cùng chứng kiến khoảnh khắc này.",
+      "image": "./assets/img/image5.jpg"
+    }
+  ],
+  "locations": [
+    {
+      "label": "Chú rể",
+      "address": "Số 96 Nguyễn Vân Bình, Yên Bắc, Duy Tiên, Hà Nam"
+    },
+    {
+      "label": "Cô dâu",
+      "address": "Số 96 Nguyễn Vân Bình, Yên Bắc, Duy Tiên, Hà Nam"
+    }
+  ]
+}
