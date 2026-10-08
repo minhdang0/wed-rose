@@ -10,7 +10,15 @@
   --text-hero: #000000;
   --pad: clamp(22px, 6vw, 72px);
   --maxw: 1120px;
+  --font-body: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-editorial: "Cormorant Garamond", Georgia, serif;
+  --font-script: "Alex Brush", cursive;
   --font-heading: "Corinthia", cursive;
+  --font-condensed: "Antonio", sans-serif;
+  --font-arsenal: "Arsenal", sans-serif;
+  --font-send-flowers: "Send Flowers", cursive;
+  --font-bonheur: "Bonheur Royale", cursive;
   --text-title-dark: #1d1d1d;
 }
 
@@ -26,7 +34,7 @@ html {
 }
 
 body {
-  font-family: "Be Vietnam Pro", system-ui, sans-serif;
+  font-family: var(--font-body);
   font-weight: 300;
   background: var(--paper);
   color: var(--ink);
@@ -43,12 +51,12 @@ body:not(.opened) {
 }
 
 .pf {
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: var(--font-serif);
   font-weight: 400;
 }
 
 .script {
-  font-family: "Alex Brush", cursive;
+  font-family: var(--font-script);
   font-weight: 400;
 }
 
