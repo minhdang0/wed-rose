@@ -21,8 +21,39 @@
   /* mở thiệp — phong bì */
   const envelope = $("envelope"),
     gate = $("gate");
+  const music = $("weddingMusic");
+  const musicToggle = $("musicToggle");
+
+  function updateMusicButton() {
+    const isPlaying = !music.paused;
+    musicToggle.classList.toggle("is-playing", isPlaying);
+    musicToggle.setAttribute("aria-pressed", String(isPlaying));
+    musicToggle.setAttribute("aria-label", isPlaying ? "Tắt nhạc" : "Bật nhạc");
+    musicToggle.title = isPlaying ? "Tắt nhạc" : "Bật nhạc";
+  }
+
+  function playMusic() {
+    music.play().catch(function (error) {
+      console.error("Không thể phát nhạc thiệp cưới:", error);
+      updateMusicButton();
+    });
+  }
+
+  music.addEventListener("play", updateMusicButton);
+  music.addEventListener("pause", updateMusicButton);
+  music.addEventListener("error", function () {
+    console.error("Không thể tải tệp nhạc thiệp cưới:", music.error);
+    updateMusicButton();
+  });
+
+  musicToggle.addEventListener("click", function () {
+    if (music.paused) playMusic();
+    else music.pause();
+  });
+
   $("openBtn").addEventListener("click", () => {
     envelope.classList.add("open");
+    playMusic();
     spawnPetals();
     setTimeout(() => {
       document.body.classList.add("opened");
