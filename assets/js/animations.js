@@ -61,36 +61,22 @@
         const h = $(".hero");
         if (!h) return;
 
-        const t = gsap.timeline({
-            delay: 0.35,
-            defaults: { ease: "power3.out" },
-        });
+        const t = gsap.timeline({ delay: 0.35, defaults: { ease: "power3.out" } });
 
         t.from(".hero-media", { scale: 1.12, duration: 2.1, ease: "power2.out" }, 0)
             .from(".hero-kicker span", { opacity: 0, y: -12, duration: 0.65, stagger: 0.1 }, 0.3)
-            .from(
-                words($(".first-title span")),
-                { ...TEXT_IN, y: 36, x: -18, stagger: 0.12, duration: 0.9 },
-                0.35,
-            )
-            .from(
-                words($(".second-title span")),
-                { ...TEXT_IN, y: 36, x: 18, stagger: 0.12, duration: 0.9 },
-                0.65,
-            )
+            .from(words($(".first-title span")), { ...TEXT_IN, y: 36, x: -18, stagger: 0.12, duration: 0.9 }, 0.35)
+            .from(words($(".second-title span")), { ...TEXT_IN, y: 36, x: 18, stagger: 0.12, duration: 0.9 }, 0.65)
             .from(words($(".hero-title p")), { opacity: 0, y: 10, stagger: 0.055, duration: 0.65 }, 1.2)
             .from(".hn-groom", { opacity: 0, x: -45, duration: 0.9 }, 1.05)
             .from(".hn-bride", { opacity: 0, x: 45, duration: 0.9 }, 1.05);
 
         gsap.to(".hero-title", {
-            y: -70,
-            opacity: 0.15,
-            ease: "none",
+            y: -70, opacity: 0.15, ease: "none",
             scrollTrigger: { trigger: h, start: "top top", end: "bottom top", scrub: true },
         });
         gsap.to(".hero-names", {
-            y: -30,
-            ease: "none",
+            y: -30, ease: "none",
             scrollTrigger: { trigger: h, start: "top top", end: "bottom top", scrub: true },
         });
     }
@@ -147,7 +133,6 @@
             const block = $(".block-design", el);
             const [role, name, quote] = $$(`${text} > span`, el);
 
-            // chỉ tween clip-path nên không đụng tới transform lệch của khối olive
             tl(el, "top 78%")
                 .fromTo(img, { clipPath: from }, { clipPath: FULL, duration: 1.2, ease: "power3.out", clearProps: "clipPath" }, 0)
                 .fromTo(block, { clipPath: from }, { clipPath: FULL, duration: 1.2, ease: "power3.out", clearProps: "clipPath" }, 0.25)
