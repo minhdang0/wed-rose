@@ -439,7 +439,6 @@ body.opened .music-toggle:active {
   position: absolute;
   inset: 0;
 }
-
 .hero-media .frame {
   position: absolute;
   inset: 0;
@@ -448,23 +447,29 @@ body.opened .music-toggle:active {
   opacity: 0;
   transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1);
   filter: grayscale(0.18) contrast(1.02);
+  will-change: opacity, transform;
+  backface-visibility: hidden;
 }
 
+/* ảnh mới: nằm trên, fade-in */
 .hero-media .frame.on {
   opacity: 1;
-  animation: drift 12s linear forwards;
+  z-index: 2;
+  animation: drift 9s linear forwards;
+}
+
+/* ảnh cũ: nằm dưới, giữ nguyên độ đậm và animation */
+.hero-media .frame.leaving {
+  opacity: 1;
+  z-index: 1;
+  transition: none;
+  animation: drift 9s linear forwards;
 }
 
 @keyframes drift {
-  from {
-    transform: scale(1.08);
-  }
-
-  to {
-    transform: scale(1);
-  }
+  from { transform: scale(1.08); }
+  to   { transform: scale(1); }
 }
-
 .hero-media::after {
   content: "";
   position: absolute;
@@ -475,6 +480,7 @@ body.opened .music-toggle:active {
       rgba(46, 4, 4, 0.08) 38%,
       rgba(46, 4, 4, 0.25) 58%,
       #fbf6ec 100%);
+      z-index: 3; 
 }
 
 .hero-kicker {
@@ -2650,4 +2656,63 @@ footer .sub {
 
 .invite .inv-lunar {
   font-size: clamp(1rem, 3.8vw, 1.15rem);
+}
+
+
+/* ===== STORY: mosaic + tráng phim ===== */
+.story-wrap {
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-y; /* cho phép vuốt ngang mà vẫn cuộn dọc được */
+}
+
+.img-half {
+  isolation: isolate;
+}
+
+.story-tiles {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  pointer-events: none;
+}
+
+.story-tiles i {
+  background: var(--olive);
+  box-shadow: inset 0 0 0 0.5px rgba(201, 162, 39, 0.55); /* viền vàng mảnh */
+  transform: scale(0);
+  will-change: transform;
+}
+
+.content-half {
+  position: relative;
+}
+
+.story-bar {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 8px;
+  height: 1px;
+  background: rgba(78, 7, 7, 0.18);
+}
+
+.story-bar i {
+  display: block;
+  height: 100%;
+  background: var(--olive);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+.story-wrap:focus-visible {
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-bar { display: none; }
 }
