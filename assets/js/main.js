@@ -290,16 +290,34 @@
     }
   }, 10000);
 
-  /* hero slideshow */
-  const frames = document.querySelectorAll("#heroMedia .frame");
+   /* hero slideshow */
+  const frames = Array.from(document.querySelectorAll("#heroMedia .frame"));
   if (frames.length > 1 && !reduce) {
     let i = 0;
+
+    // giải mã sẵn ảnh nền để lúc chuyển không bị khựng
+    frames.forEach(function (f) {
+      const m = /url\(["']?(.*?)["']?\)/.exec(getComputedStyle(f).backgroundImage);
+      if (!m) return;
+      const im = new Image();
+      im.src = m[1];
+      if (im.decode) im.decode().catch(function () {});
+    });
+
     setInterval(function () {
-      frames[i].classList.remove("on");
+      const prev = frames[i];
       i = (i + 1) % frames.length;
-      frames[i].classList.remove("on");
-      void frames[i].offsetWidth;
-      frames[i].classList.add("on");
+      const next = frames[i];
+
+      prev.classList.remove("on");
+      prev.classList.add("leaving");   
+      next.classList.remove("leaving");
+      void next.offsetWidth;
+      next.classList.add("on");       
+
+      setTimeout(function () {
+        prev.classList.remove("leaving");
+      }, 2200);
     }, 7000);
   }
 
@@ -370,6 +388,7 @@
   }
 
   /* our love story */
+    /* our love story — mosaic + tráng phim */
   (function () {
     var storyData = weddingData.story.map(function (story) {
       return {
@@ -383,12 +402,23 @@
     var stage = $("storyStage");
     if (!stage) return;
 
-    var card = $("storyCard");
-    var halves = [$("pivotImg"), $("pivotText")];
+    var imgHalf = $("pivotImg");
+    var textHalf = $("pivotText");
+    var img = $("storyImg");
+    var yearEl = $("storyYear");
+    var textEl = $("storyText");
+    var countEl = $("storyCount");
+
     var len = storyData.length;
     var current = 0;
     var busy = false;
-    var timer;
+    var visible = false;
+    var autoTween = null;
+
+    var AUTO = 5; // giây giữa hai chương
+    var COLS = 5;
+    var ROWS = 3;
+    var GRID = [ROWS, COLS];
 
     // preload để không nháy ảnh
     storyData.forEach(function (s) {
@@ -396,71 +426,174 @@
       im.src = s.img;
     });
 
+    /* ---- lớp ô mosaic phủ lên ảnh ---- */
+    var tilesWrap = document.createElement("div");
+    tilesWrap.className = "story-tiles";
+    for (var t = 0; t < COLS * ROWS; t++) {
+      tilesWrap.appendChild(document.createElement("i"));
+    }
+    imgHalf.appendChild(tilesWrap);
+    var tiles = Array.prototype.slice.call(tilesWrap.children);
+
+    /* ---- thanh báo giờ tự chuyển ---- */
+    var bar = document.createElement("div");
+    bar.className = "story-bar";
+    bar.innerHTML = "<i></i>";
+    textHalf.appendChild(bar);
+    var barFill = bar.firstChild;
+
+    /* ---- trợ năng ---- */
+    stage.setAttribute("tabindex", "0");
+    stage.setAttribute("role", "button");
+    stage.setAttribute("aria-label", "Chạm để xem chương tiếp theo");
+
     function render(i) {
       var item = storyData[i];
-      var img = $("storyImg");
       img.src = item.img;
       img.alt = item.title;
-      $("storyYear").textContent = item.year + " - " + item.title;
-      $("storyText").textContent = item.text;
-      $("storyCount").textContent =
+      yearEl.textContent = item.year + " - " + item.title;
+      textEl.textContent = item.text;
+      countEl.textContent =
         String(i + 1).padStart(2, "0") + " / " + String(len).padStart(2, "0");
-      card.classList.toggle("swapped", i % 2 === 1);
     }
 
-    function pivot(from, to, ms, easing, dir) {
-      return Promise.all(
-        halves.map(function (el) {
-          return el.animate(
-            [
-              {
-                transform: "perspective(1200px) rotateX(" + from * dir + "deg)",
-              },
-              { transform: "perspective(1200px) rotateX(" + to * dir + "deg)" },
-            ],
-            { duration: ms, easing: easing, fill: "both" },
-          ).finished;
-        }),
-      );
+    // gsap tween -> Promise
+    function tw(targets, vars) {
+      return new Promise(function (resolve) {
+        gsap.to(targets, Object.assign({}, vars, { onComplete: resolve }));
+      });
     }
 
-    async function next(manual) {
+    function killAuto() {
+      if (autoTween) autoTween.kill();
+      autoTween = null;
+      gsap.set(barFill, { scaleX: 0 });
+    }
+
+    function startAuto() {
+      killAuto();
+      if (!visible || busy) return;
+      autoTween = gsap.to(barFill, {
+        scaleX: 1,
+        duration: AUTO,
+        ease: "none",
+        onComplete: function () {
+          go(1);
+        },
+      });
+    }
+
+    async function go(dir) {
       if (busy) return;
       busy = true;
-      if (manual) startTimer();
+      killAuto();
 
-      var n = (current + 1) % len;
-      var dir = n % 2 === 1 ? 1 : -1;
+      var n = (current + dir + len) % len;
+      if (typeof tick === "function") tick(); // tiếng "tách" nếu bạn đã thêm
 
       if (reduce) {
         render(n);
         current = n;
         busy = false;
+        startAuto();
         return;
       }
 
-      await pivot(0, 90, 550, "cubic-bezier(0.5, 0, 0.9, 0.6)", dir);
+      // 1) chữ cũ mờ đi, các ô olive nở ra từ giữa
+      gsap.to([yearEl, textEl], { opacity: 0, y: -10, duration: 0.35, ease: "power1.in" });
+      await tw(tiles, {
+        scale: 1.04, // >1 để không hở khe giữa các ô
+        duration: 0.45,
+        ease: "power2.in",
+        stagger: { grid: GRID, from: "center", amount: 0.5 },
+      });
+
+      // 2) đổi nội dung khi ảnh đã bị che hoàn toàn
       render(n);
-      try {
-        await $("storyImg").decode();
-      } catch (e) {}
-      await pivot(-90, 0, 650, "cubic-bezier(0.1, 0.4, 0.3, 1)", dir);
       current = n;
+      try {
+        await img.decode();
+      } catch (e) {}
+
+      gsap.set(img, {
+        filter: "sepia(1) brightness(1.45) saturate(0.4) blur(6px)",
+        scale: 1.12,
+      });
+
+      // 3) ảnh mới "tráng phim" từ mờ ngả vàng sang nét
+      gsap.to(img, {
+        filter: "sepia(0) brightness(1) saturate(1) blur(0px)",
+        scale: 1,
+        duration: 1.9,
+        ease: "power2.out",
+        clearProps: "filter,transform",
+      });
+
+      // 4) chữ được viết ra
+      gsap.fromTo(
+        yearEl,
+        { clipPath: "inset(-20% 100% -20% -5%)", opacity: 1, y: 0 },
+        {
+          clipPath: "inset(-20% -5% -20% -5%)",
+          duration: 1.1,
+          ease: "power2.inOut",
+          clearProps: "clipPath",
+        },
+      );
+      gsap.fromTo(
+        textEl,
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.9, delay: 0.5, ease: "power2.out" },
+      );
+
+      // 5) các ô co dần từ mép vào, lộ ảnh mới
+      await tw(tiles, {
+        scale: 0,
+        duration: 0.55,
+        ease: "power2.out",
+        stagger: { grid: GRID, from: "edges", amount: 0.5 },
+      });
+
       busy = false;
+      startAuto();
     }
 
-    function startTimer() {
-      clearInterval(timer);
-      timer = setInterval(function () {
-        next(false);
-      }, 5000);
-    }
+    /* ---- chạm / vuốt ---- */
+    var startX = null;
+    stage.addEventListener("pointerdown", function (e) {
+      startX = e.clientX;
+    });
+    stage.addEventListener("pointerup", function (e) {
+      if (startX === null) return;
+      var dx = e.clientX - startX;
+      startX = null;
+      if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+      else go(1);
+    });
+    stage.addEventListener("pointercancel", function () {
+      startX = null;
+    });
+    stage.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        go(1);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        go(-1);
+      }
+    });
+
+    /* ---- chỉ tự chạy khi khung đang trong màn hình ---- */
+    new IntersectionObserver(
+      function (entries) {
+        visible = entries[0].isIntersecting;
+        if (visible) startAuto();
+        else killAuto();
+      },
+      { threshold: 0.4 },
+    ).observe(stage);
 
     render(0);
-    stage.addEventListener("click", function () {
-      next(true);
-    });
-    startTimer();
   })();
 
   /* album Cherished Moments — cuộn dọc thì dải ảnh chạy ngang */
