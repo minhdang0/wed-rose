@@ -8,6 +8,7 @@
   <meta name="description" data-wedding-content="site.description"
     content="Hoàng Vinh & Nguyễn Nhung — 25 tháng 10, 2026, GEM Center, TP. Hồ Chí Minh." />
 
+  <link rel="preload" as="image" href="./assets/img/floral-mask.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -15,6 +16,7 @@
     rel="stylesheet" />
   <link rel="stylesheet" href="./assets/css/main.css" />
   <link rel="stylesheet" href="./assets/css/wed.css" />
+
 </head>
 
 <body>
@@ -111,74 +113,23 @@
       <h2 class="t-line t-line-2">Confession</h2>
     </div>
     <div class="love-letter">
-      <div class="groom-letter io">
-        <div class="letter-media">
-          <div class="streak-color" aria-hidden="true"></div>
-          <p class="letter-text groom-media">
-            Gặp em, mọi con đường anh đi đều có điểm đến.
-          </p>
+      <div class="groom-letter">
+        <div class="block-design groom-block"></div>
+        <div class="groom-text">
+          <span>Chú rể</span>
+          <span data-wedding="couple.groom">Hoàng Vinh</span>
+          <span>Gặp em, mọi con đường anh đi đều có điểm đến.</span>
         </div>
-        <div class="img-groom-wrap">
-          <img data-wedding-src="images.groom" src="./assets/img/groom.jpg" alt="groom" />
-        </div>
+        <img src="./assets/img/groom.jpg" />
       </div>
-      <div class="letter-divider" aria-hidden="true">
-        <svg class="dv-vine" viewBox="0 0 260 90" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="vineGoldL" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="var(--olive)" stop-opacity="0" />
-              <stop offset="100%" stop-color="var(--olive)" stop-opacity="1" />
-            </linearGradient>
-          </defs>
-          <path d="M4,50 C60,25 90,75 140,55 C180,40 205,60 252,50" fill="none" stroke="url(#vineGoldL)"
-            stroke-width="1.3" />
-          <g fill="var(--olive)" opacity="0.85">
-            <ellipse cx="30" cy="42" rx="5.5" ry="2.4" transform="rotate(-25 30 42)" />
-            <ellipse cx="55" cy="30" rx="6" ry="2.6" transform="rotate(-40 55 30)" />
-            <ellipse cx="85" cy="68" rx="6" ry="2.6" transform="rotate(30 85 68)" />
-            <ellipse cx="112" cy="58" rx="5.5" ry="2.4" transform="rotate(-15 112 58)" />
-            <ellipse cx="140" cy="43" rx="5.5" ry="2.4" transform="rotate(25 140 43)" />
-            <ellipse cx="170" cy="35" rx="5" ry="2.2" transform="rotate(-20 170 35)" />
-            <ellipse cx="200" cy="62" rx="5" ry="2.2" transform="rotate(20 200 62)" />
-            <ellipse cx="230" cy="45" rx="4.5" ry="2" transform="rotate(-15 230 45)" />
-          </g>
-        </svg>
-
-        <div class="dv-icon-wrap">
-          <span class="dv-icon"></span>
+      <div class="bride-letter">
+        <div class="block-design bride-block"></div>
+        <div class="bride-text">
+          <span>Cô dâu</span>
+          <span data-wedding="couple.bride">Nguyễn Nhung</span>
+          <span>Anh là bình yên của em, hôm nay và mãi mãi.</span>
         </div>
-
-        <svg class="dv-vine" viewBox="0 0 260 90" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="vineGoldR" x1="100%" y1="0%" x2="0%" y2="0%">
-              <stop offset="0%" stop-color="var(--olive)" stop-opacity="0" />
-              <stop offset="100%" stop-color="var(--olive)" stop-opacity="1" />
-            </linearGradient>
-          </defs>
-          <path d="M256,50 C200,25 170,75 120,55 C80,40 55,60 8,50" fill="none" stroke="url(#vineGoldR)"
-            stroke-width="1.3" />
-          <g fill="var(--olive)" opacity="0.85">
-            <ellipse cx="230" cy="42" rx="5.5" ry="2.4" transform="rotate(25 230 42)" />
-            <ellipse cx="205" cy="30" rx="6" ry="2.6" transform="rotate(40 205 30)" />
-            <ellipse cx="175" cy="68" rx="6" ry="2.6" transform="rotate(-30 175 68)" />
-            <ellipse cx="148" cy="58" rx="5.5" ry="2.4" transform="rotate(15 148 58)" />
-            <ellipse cx="120" cy="43" rx="5.5" ry="2.4" transform="rotate(-25 120 43)" />
-            <ellipse cx="90" cy="35" rx="5" ry="2.2" transform="rotate(20 90 35)" />
-            <ellipse cx="60" cy="62" rx="5" ry="2.2" transform="rotate(-20 60 62)" />
-            <ellipse cx="30" cy="45" rx="4.5" ry="2" transform="rotate(15 30 45)" />
-          </g>
-        </svg>
-      </div>
-      <div class="bride-letter io">
-        <div class="img-bride-wrap">
-          <img data-wedding-src="images.bride" src="./assets/img/bride.jpg" alt="bride" />
-        </div>
-        <div class="letter-media bride-media">
-          <div class="streak-color" aria-hidden="true"></div>
-          <p class="letter-text">
-            Anh là bình yên của em, hôm nay và mãi mãi.
-          </p>
-        </div>
+        <img src="./assets/img/bride.jpg" />
       </div>
     </div>
   </section>
@@ -352,12 +303,14 @@
       <div class="groom-info">
         <h3>Nhà trai</h3>
         <p data-wedding-lines="families.groom.names"><span>Nguyễn Văn Hùng</span><br /><span>Trần Thị Lan</span></p>
-        <p data-wedding-lines="families.groom.address"><span>Số 96 Nguyễn Vân Bình,</span><br /><span>Yên Bắc Duy Tiên Hà Nam</span></p>
+        <p data-wedding-lines="families.groom.address"><span>Số 96 Nguyễn Vân Bình,</span><br /><span>Yên Bắc Duy Tiên
+            Hà Nam</span></p>
       </div>
       <div class="bride-info">
         <h3>Nhà gái</h3>
         <p data-wedding-lines="families.bride.names"><span>Nguyễn Văn Hùng</span><br /><span>Trần Thị Lan</span></p>
-        <p data-wedding-lines="families.bride.address"><span>Số 96 Nguyễn Vân Bình,</span><br /><span>Yên Bắc Duy Tiên Hà Nam</span></p>
+        <p data-wedding-lines="families.bride.address"><span>Số 96 Nguyễn Vân Bình,</span><br /><span>Yên Bắc Duy Tiên
+            Hà Nam</span></p>
       </div>
     </div>
 
@@ -423,7 +376,8 @@
       </div>
     </div>
     <div class="title-date">
-      <h2 class="t-date-line-1"><span data-wedding="couple.groom">Hoàng Vinh</span> - <span data-wedding="couple.bride">Nguyễn Nhung</span></h2>
+      <h2 class="t-date-line-1"><span data-wedding="couple.groom">Hoàng Vinh</span> - <span
+          data-wedding="couple.bride">Nguyễn Nhung</span></h2>
       <p class="t-date-line-2">Are getting married</p>
     </div>
     <div class="cal-photo io" id="wedCal">
@@ -487,7 +441,9 @@
   <footer>
     <div class="wrap io">
       <div class="big script">Thank You</div>
-      <div class="sub"><span data-wedding="couple.groom">Hoàng Vinh</span> &amp; <span data-wedding="couple.bride">Nguyễn Nhung</span> · <span data-wedding="couple.dateDisplay">25 · 10 · 2026</span></div>
+      <div class="sub"><span data-wedding="couple.groom">Hoàng Vinh</span> &amp; <span
+          data-wedding="couple.bride">Nguyễn Nhung</span> · <span data-wedding="couple.dateDisplay">25 · 10 ·
+          2026</span></div>
     </div>
   </footer>
 
@@ -497,7 +453,11 @@
     <img data-wedding-src="music.icon" src="./assets/icon/music-note.png" alt="" />
   </button>
 
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/animations.js"></script>
 </body>
 
 </html>
