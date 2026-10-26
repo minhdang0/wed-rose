@@ -445,7 +445,8 @@ body.opened .music-toggle:active {
   background-size: cover;
   background-position: center;
   opacity: 0;
-  transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(1) translateX(0);
+  transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1), transform 2.2s ease-out;
   filter: grayscale(0.18) contrast(1.02);
   will-change: opacity, transform;
   backface-visibility: hidden;
@@ -455,20 +456,20 @@ body.opened .music-toggle:active {
 .hero-media .frame.on {
   opacity: 1;
   z-index: 2;
-  animation: drift 9s linear forwards;
+  animation: drift 12s linear forwards;
 }
 
-/* ảnh cũ: nằm dưới, giữ nguyên độ đậm và animation */
+/* ảnh cũ: nằm dưới và trượt ngược chiều trong lúc chuyển cảnh */
 .hero-media .frame.leaving {
   opacity: 1;
   z-index: 1;
-  transition: none;
-  animation: drift 9s linear forwards;
+  animation: none;
+  transform: scale(1.04) translateX(-2%);
 }
 
 @keyframes drift {
-  from { transform: scale(1.08); }
-  to   { transform: scale(1); }
+  from { transform: scale(1.02) translateX(-1%); }
+  to   { transform: scale(1.12) translateX(2%); }
 }
 .hero-media::after {
   content: "";
@@ -483,12 +484,26 @@ body.opened .music-toggle:active {
       z-index: 3; 
 }
 
+.hero-light {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(201, 162, 39, 0.18) 48%,
+    transparent 65%
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
 .hero-kicker {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 3;
+  z-index: 5;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -505,7 +520,7 @@ body.opened .music-toggle:active {
   top: 10%;
   left: 0;
   right: 0;
-  z-index: 3;
+  z-index: 5;
   text-align: center;
   padding: 0 24px;
   color: #fbf6ec;
@@ -543,6 +558,7 @@ body.opened .music-toggle:active {
 
 .hero-names {
   position: absolute;
+  z-index: 5;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -556,6 +572,16 @@ body.opened .music-toggle:active {
   color: var(--soft-black);
   gap: 1.2rem;
   line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-media .frame,
+  .hero-media .frame.on,
+  .hero-media .frame.leaving {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
 }
 
 .hn-groom,
@@ -2715,4 +2741,74 @@ footer .sub {
 
 @media (prefers-reduced-motion: reduce) {
   .story-bar { display: none; }
+}
+
+.hero-media,
+.hero-title,
+.hero-names {
+  will-change: transform, opacity;
+}
+
+.hero-media {
+  transform-origin: 50% 50%;
+}
+
+.hero-title h1 span,
+.hero-title p {
+  white-space: nowrap;
+}
+
+.album-frame { contain: layout paint; }
+.album-track { backface-visibility: hidden; }
+
+.shot img,
+.card-wrap img {
+  filter: none;
+  box-shadow: 0 10px 20px -12px rgba(20, 2, 2, 0.45);
+}
+
+.hero-media .frame { filter: none; }
+
+/* cánh hoa: bỏ shadow */
+.petal { box-shadow: none; }
+
+.shine::after,
+.third-card .card-wrap:nth-child(3)::after {
+  left: 0;
+  width: 40%;
+  transform: translate3d(-150%, 0, 0) skewX(-18deg);
+  will-change: transform;
+}
+
+@keyframes sweep {
+  0%       { transform: translate3d(-150%, 0, 0) skewX(-18deg); }
+  55%,100% { transform: translate3d(350%, 0, 0)  skewX(-18deg); }
+}
+
+@keyframes kenBurns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.14); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.06); }
+}
+
+.shine::after { animation-play-state: paused; }
+.is-visible .shine::after { animation-play-state: running; }
+
+@media (max-width: 720px) {
+  /* Thẻ 1 và 2: giữ nguyên layout gốc, ô ngang vẫn ngang.
+     Chỉ chỉnh vị trí cắt cho ảnh dọc để giữ khuôn mặt. */
+  .p1-a img,
+  .p2-a img { object-position: center 20%; }
+
+  /* Thẻ 3: lưới 3x2, mỗi ô ~178×250px (tỉ lệ dọc 5:7), không phụ thuộc svh */
+  .third-card {
+    width: 36rem;
+    height: 33rem;
+    flex: 0 0 auto;
+  }
+  .third-card .card-wrap img { object-position: center 25%; }
 }
