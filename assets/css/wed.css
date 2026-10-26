@@ -2753,50 +2753,11 @@ footer .sub {
   transform-origin: 50% 50%;
 }
 
+/* chữ tách từ không bị xuống dòng bất ngờ */
 .hero-title h1 span,
 .hero-title p {
   white-space: nowrap;
 }
-
-.album-frame { contain: layout paint; }
-.album-track { backface-visibility: hidden; }
-
-.shot img,
-.card-wrap img {
-  filter: none;
-  box-shadow: 0 10px 20px -12px rgba(20, 2, 2, 0.45);
-}
-
-.hero-media .frame { filter: none; }
-
-/* cánh hoa: bỏ shadow */
-.petal { box-shadow: none; }
-
-.shine::after,
-.third-card .card-wrap:nth-child(3)::after {
-  left: 0;
-  width: 40%;
-  transform: translate3d(-150%, 0, 0) skewX(-18deg);
-  will-change: transform;
-}
-
-@keyframes sweep {
-  0%       { transform: translate3d(-150%, 0, 0) skewX(-18deg); }
-  55%,100% { transform: translate3d(350%, 0, 0)  skewX(-18deg); }
-}
-
-@keyframes kenBurns {
-  from { transform: scale(1); }
-  to   { transform: scale(1.14); }
-}
-
-@keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.06); }
-}
-
-.shine::after { animation-play-state: paused; }
-.is-visible .shine::after { animation-play-state: running; }
 
 @media (max-width: 720px) {
   /* Thẻ 1 và 2: giữ nguyên layout gốc, ô ngang vẫn ngang.
@@ -2811,21 +2772,4 @@ footer .sub {
     flex: 0 0 auto;
   }
   .third-card .card-wrap img { object-position: center 25%; }
-}
-/* Album chạy theo cuộn bằng CSS, không phụ thuộc JS */
-@supports (animation-timeline: view()) {
-  .album-scroll { view-timeline: --album block; }
-  .album-frame  { container-type: inline-size; }
-
-  .album-track {
-    animation: album-pan linear both;
-    animation-timeline: --album;
-    /* khớp với .album-frame { top: 5svh; height: 90svh } */
-    animation-range: cover 95svh cover calc(100% - 95svh);
-  }
-}
-
-@keyframes album-pan {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(calc(-100% + 100cqw), 0, 0); }
 }
