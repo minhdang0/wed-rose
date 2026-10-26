@@ -615,7 +615,7 @@
     frame = $("albumFrame"),
     track = $("albumTrack");
   if (!scroller || !frame || !track) return;
-
+  if (window.CSS && CSS.supports("animation-timeline: view()")) return;
   let raf = null;
   let scrollerTop = 0;
   let total = 0;
