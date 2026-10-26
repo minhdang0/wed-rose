@@ -1,7 +1,7 @@
 /* =====================================================================
    animations.js — hiệu ứng GSAP cho thiệp cưới
    Nạp SAU main.js. Cần: gsap, ScrollTrigger, SplitText (3.13+).
-   - Không sửa HTML: tự gỡ class .rv / .io cũ rồi để GSAP lo toàn bộ.
+   - Gỡ class .rv / .io cũ rồi để GSAP lo toàn bộ.
    - Chạy sau khi phong bì mở (body.opened), lúc đó main.js đã điền xong chữ.
    - Tôn trọng prefers-reduced-motion: tắt hiệu ứng thì mọi thứ hiện sẵn.
    ===================================================================== */
@@ -14,6 +14,7 @@
     }
     const hasSplit = !!window.SplitText;
     gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ ignoreMobileResize: true });
     if (hasSplit) gsap.registerPlugin(SplitText);
 
     const $ = (s, r = document) => r.querySelector(s);
@@ -33,6 +34,7 @@
         filter: "blur(5px)",
         duration: 0.9,
         ease: "power2.out",
+        clearProps: "filter",
     };
     const origins = ["0% 0%", "100% 0%", "0% 100%", "100% 100%"]; // tl tr bl br
 
@@ -61,22 +63,43 @@
         const h = $(".hero");
         if (!h) return;
 
-        const t = gsap.timeline({ delay: 0.35, defaults: { ease: "power3.out" } });
+        const t = gsap.timeline({
+            delay: 0.35,
+            defaults: { ease: "power3.out" },
+        });
 
         t.from(".hero-media", { scale: 1.12, duration: 2.1, ease: "power2.out" }, 0)
             .from(".hero-kicker span", { opacity: 0, y: -12, duration: 0.65, stagger: 0.1 }, 0.3)
-            .from(words($(".first-title span")), { ...TEXT_IN, y: 36, x: -18, stagger: 0.12, duration: 0.9 }, 0.35)
-            .from(words($(".second-title span")), { ...TEXT_IN, y: 36, x: 18, stagger: 0.12, duration: 0.9 }, 0.65)
+            .from(
+                words($(".first-title span")),
+                { opacity: 0, y: 50, x: -40, scale: 0.85, filter: "blur(8px)", stagger: 0.1, duration: 1.1 },
+                0.4,
+            )
+            .from(
+                words($(".second-title span")),
+                { opacity: 0, y: 50, x: 40, scale: 0.85, filter: "blur(8px)", stagger: 0.1, duration: 1.1 },
+                0.7,
+            )
+            .to(".hero-title", { scale: 1.03, duration: 1.4, ease: "sine.inOut", yoyo: true, repeat: 1 }, 1.8)
             .from(words($(".hero-title p")), { opacity: 0, y: 10, stagger: 0.055, duration: 0.65 }, 1.2)
-            .from(".hn-groom", { opacity: 0, x: -45, duration: 0.9 }, 1.05)
-            .from(".hn-bride", { opacity: 0, x: 45, duration: 0.9 }, 1.05);
+            .from(".hn-groom", { opacity: 0, x: -80, duration: 1.1 }, 1.3)
+            .from(".hn-bride", { opacity: 0, x: 80, duration: 1.1 }, 1.3)
+            .fromTo(
+                ".hero-light",
+                { x: "-60%", opacity: 0 },
+                { x: "60%", opacity: 1, duration: 1.8, ease: "power2.inOut" },
+                0.8,
+            );
 
         gsap.to(".hero-title", {
-            y: -70, opacity: 0.15, ease: "none",
+            y: -70,
+            opacity: 0.15,
+            ease: "none",
             scrollTrigger: { trigger: h, start: "top top", end: "bottom top", scrub: true },
         });
         gsap.to(".hero-names", {
-            y: -30, ease: "none",
+            y: -30,
+            ease: "none",
             scrollTrigger: { trigger: h, start: "top top", end: "bottom top", scrub: true },
         });
     }
