@@ -342,7 +342,20 @@
       el.classList.add("seen");
     });
   }
-
+  
+  if ("IntersectionObserver" in window) {
+  const vis = new IntersectionObserver(
+    function (es) {
+      es.forEach(function (e) {
+        e.target.classList.toggle("is-visible", e.isIntersecting);
+      });
+    },
+    { rootMargin: "100px 0px" },
+  );
+  document.querySelectorAll("#albumScroll, .invite").forEach(function (el) {
+    vis.observe(el);
+  });
+}
   //falling flower petal effect
   function spawnPetals(durationMs = 6000) {
     if (reduce) return;
@@ -597,49 +610,71 @@
   })();
 
   /* album Cherished Moments — cuộn dọc thì dải ảnh chạy ngang */
-  (function () {
-    const scroller = $("albumScroll"),
-      frame = $("albumFrame"),
-      track = $("albumTrack");
-    if (!scroller || !frame || !track) return;
+(function () {
+  const scroller = $("albumScroll"),
+    frame = $("albumFrame"),
+    track = $("albumTrack");
+  if (!scroller || !frame || !track) return;
 
-    let raf = null;
-    let scrollerTop = 0;
-    let total = 0;
-    let topOffset = 0;
-    let maxX = 0;
+  let raf = null;
+  let scrollerTop = 0;
+  let total = 0;
+  let topOffset = 0;
+  let maxX = 0;
+  let lastX = null;
+  let lastW = window.innerWidth;
 
-    function measure() {
-      const rect = scroller.getBoundingClientRect();
-      scrollerTop = rect.top + window.scrollY;
-      total = rect.height - frame.offsetHeight;
-      topOffset = parseFloat(getComputedStyle(frame).top) || 0;
-      maxX = Math.max(0, track.scrollWidth - frame.clientWidth);
-    }
+  function measure() {
+    const rect = scroller.getBoundingClientRect();
+    scrollerTop = rect.top + window.scrollY;
+    total = scroller.offsetHeight - frame.offsetHeight;
+    topOffset = parseFloat(getComputedStyle(frame).top) || 0;
+    maxX = Math.max(0, track.scrollWidth - frame.clientWidth);
+  }
 
-    function render() {
-      raf = null;
-      const rectTop = scrollerTop - window.scrollY;
-      const progress =
-        total > 0 ? Math.min(1, Math.max(0, (topOffset - rectTop) / total)) : 0;
-      track.style.transform = "translate3d(" + -progress * maxX + "px,0,0)";
-    }
+  function render() {
+    raf = null;
+    const rectTop = scrollerTop - window.scrollY;
+    const progress =
+      total > 0 ? Math.min(1, Math.max(0, (topOffset - rectTop) / total)) : 0;
+    const x = Math.round(-progress * maxX); // làm tròn để không bị mờ chữ/ảnh
+    if (x === lastX) return;
+    lastX = x;
+    track.style.transform = "translate3d(" + x + "px,0,0)";
+  }
 
-    function onScroll() {
-      if (raf === null) raf = requestAnimationFrame(render);
-    }
+  function onScroll() {
+    if (raf === null) raf = requestAnimationFrame(render);
+  }
 
-    function onGeometryChange() {
-      measure();
-      onScroll();
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onGeometryChange);
-    window.addEventListener("load", onGeometryChange);
+  function remeasure() {
     measure();
-    render();
-  })();
+    lastX = null;
+    onScroll();
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  // Chỉ đo lại khi CHIỀU RỘNG đổi. Thanh địa chỉ mobile ẩn/hiện chỉ đổi chiều cao.
+  window.addEventListener("resize", function () {
+    if (window.innerWidth === lastW) return;
+    lastW = window.innerWidth;
+    remeasure();
+  });
+  window.addEventListener("load", remeasure);
+  window.addEventListener("orientationchange", remeasure);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
+  if (window.ScrollTrigger) ScrollTrigger.addEventListener("refresh", remeasure);
+
+  // decode sẵn ảnh để lúc cuộn không bị khựng
+  track.querySelectorAll("img").forEach(function (im) {
+    im.decoding = "async";
+    if (im.decode) im.decode().catch(function () {});
+  });
+
+  measure();
+  render();
+})();
 
   (function () {
     var units = {
