@@ -2786,3 +2786,42 @@ footer .sub {
 .title-stack .t-line-1 { transform: translateX(-2.4rem); }
 .title-stack .t-line-2 { transform: translateX(2.4rem) translateY(-30%); }
 .invite .wed-info { overflow-x: clip; }
+/* Album: cuộn ngang thật, ẩn thanh cuộn */
+.album-scroll {
+  position: relative;
+  height: 90svh;
+  isolation: isolate;
+}
+
+/* nền chuyển ra ngoài vùng cuộn để không trôi theo ảnh */
+.album-scroll::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url("../img/image6.jpg") center / cover no-repeat;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+}
+.album-frame::before { content: none; }
+
+.album-frame {
+  position: relative;
+  top: 0;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;          /* Firefox */
+}
+.album-frame::-webkit-scrollbar { display: none; }  /* Chrome, Safari */
+
+.album-track {
+  transform: none !important;     /* bỏ transform do JS đặt */
+  will-change: auto;
+}
+
+@media (max-width: 720px) {
+  .album-scroll { height: 90svh; }
+}
