@@ -2825,3 +2825,54 @@ footer .sub {
 @media (max-width: 720px) {
   .album-scroll { height: 90svh; }
 }
+/* ===== ALBUM: cuộn ngang thật, khung = 100% màn hình ===== */
+.album-scroll {
+  --album-h: 100svh;                 /* chiều cao khung album */
+  position: relative;
+  height: var(--album-h);
+  isolation: isolate;
+}
+
+/* ảnh nền phủ 100% khung (cao 100%, rộng 100%) */
+.album-scroll::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url("../img/image6.jpg") center / cover no-repeat;
+  /* mờ nhẹ ở mép trên/dưới cho hòa vào trang; xoá 2 dòng mask nếu muốn 100% không mờ */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
+}
+.album-frame::before { content: none; }
+
+.album-frame {
+  position: relative;
+  top: 0;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.album-frame::-webkit-scrollbar { display: none; }
+
+.album-track {
+  height: 100%;
+  transform: none !important;
+  will-change: auto;
+}
+
+/* thẻ 3 chiếm 90% chiều cao khung, ô ảnh giữ tỉ lệ dọc */
+.third-card {
+  height: 90%;
+  max-height: none;
+  width: calc(var(--album-h) * 0.9 * 0.83);
+  flex: 0 0 auto;
+}
+.third-card .card-wrap img { object-position: center 25%; }
+
+@media (max-width: 720px) {
+  .album-scroll { height: var(--album-h); }
+}
