@@ -602,7 +602,7 @@
       frame = $("albumFrame"),
       track = $("albumTrack");
     if (!scroller || !frame || !track) return;
-
+    return;
     let raf = null;
     let scrollerTop = 0;
     let total = 0;
