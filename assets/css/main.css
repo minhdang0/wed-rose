@@ -33,6 +33,12 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+html,
+body {
+  max-width: 100%;
+  overscroll-behavior-x: none;
+}
+
 body {
   font-family: var(--font-body);
   font-weight: 300;
@@ -97,4 +103,13 @@ a {
 }
 .contacts {
   grid-template-columns: 1fr !important;
+}
+
+@supports (overflow: clip) {
+  html,
+  body,
+  section,
+  footer {
+    overflow-x: clip;
+  }
 }
