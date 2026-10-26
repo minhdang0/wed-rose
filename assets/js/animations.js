@@ -14,7 +14,6 @@
     }
     const hasSplit = !!window.SplitText;
     gsap.registerPlugin(ScrollTrigger);
-    ScrollTrigger.config({ ignoreMobileResize: true });
     if (hasSplit) gsap.registerPlugin(SplitText);
 
     const $ = (s, r = document) => r.querySelector(s);
@@ -34,7 +33,6 @@
         filter: "blur(5px)",
         duration: 0.9,
         ease: "power2.out",
-        clearProps: "filter",
     };
     const origins = ["0% 0%", "100% 0%", "0% 100%", "100% 100%"]; // tl tr bl br
 
