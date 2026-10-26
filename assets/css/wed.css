@@ -2760,8 +2760,6 @@ footer .sub {
 }
 
 @media (max-width: 720px) {
-  /* Thẻ 1 và 2: giữ nguyên layout gốc, ô ngang vẫn ngang.
-     Chỉ chỉnh vị trí cắt cho ảnh dọc để giữ khuôn mặt. */
   .p1-a img,
   .p2-a img { object-position: center 20%; }
 
@@ -2778,3 +2776,13 @@ footer .sub {
 #albumScroll *::after {
   animation: none !important;
 }
+.title-stack .t-line {
+  width: fit-content;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title-stack .t-line-1 { transform: translateX(-2.4rem); }
+.title-stack .t-line-2 { transform: translateX(2.4rem) translateY(-30%); }
+.invite .wed-info { overflow-x: clip; }
