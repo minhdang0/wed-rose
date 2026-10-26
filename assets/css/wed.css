@@ -2773,3 +2773,8 @@ footer .sub {
   }
   .third-card .card-wrap img { object-position: center 25%; }
 }
+#albumScroll *,
+#albumScroll *::before,
+#albumScroll *::after {
+  animation: none !important;
+}
