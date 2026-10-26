@@ -13,22 +13,22 @@
     "groom": "./assets/img/groom.jpg",
     "bride": "./assets/img/bride.jpg",
     "gallery": [
+      "./assets/img/image2.jpg",
+      "./assets/img/image3.jpg",
+      "./assets/img/image4.jpg",
+      "./assets/img/image5.jpg",
+      "./assets/img/image6.jpg",
       "./assets/img/image7.jpg",
       "./assets/img/image8.jpg",
       "./assets/img/image9.jpg",
       "./assets/img/image10.jpg",
-      "./assets/img/image11.jpg",
-      "./assets/img/image12.jpg",
-      "./assets/img/image13.jpg",
-      "./assets/img/image14.jpg",
-      "./assets/img/image15.jpg",
-      "./assets/img/image16.jpg"
+      "./assets/img/image11.jpg"
     ],
     "countdown": [
-      "./assets/img/image13.jpg",
-      "./assets/img/image14.jpg",
-      "./assets/img/image15.jpg",
-      "./assets/img/image16.jpg"
+      "./assets/img/hero1.jpg",
+      "./assets/img/hero2.jpg",
+      "./assets/img/hero3.jpg",
+      "./assets/img/hero4.jpg"
     ],
     "calendar": "./assets/img/hero3.jpg"
   },
