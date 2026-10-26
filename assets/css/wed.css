@@ -2812,3 +2812,20 @@ footer .sub {
   }
   .third-card .card-wrap img { object-position: center 25%; }
 }
+/* Album chạy theo cuộn bằng CSS, không phụ thuộc JS */
+@supports (animation-timeline: view()) {
+  .album-scroll { view-timeline: --album block; }
+  .album-frame  { container-type: inline-size; }
+
+  .album-track {
+    animation: album-pan linear both;
+    animation-timeline: --album;
+    /* khớp với .album-frame { top: 5svh; height: 90svh } */
+    animation-range: cover 95svh cover calc(100% - 95svh);
+  }
+}
+
+@keyframes album-pan {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(calc(-100% + 100cqw), 0, 0); }
+}
