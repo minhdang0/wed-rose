@@ -196,7 +196,7 @@
     .forEach(function (element) {
       const schedule =
         weddingData.event.schedule[
-          Number(element.getAttribute("data-wedding-schedule"))
+        Number(element.getAttribute("data-wedding-schedule"))
         ];
       const label = element.querySelector("h3");
       const time = element.querySelector("p");
@@ -290,7 +290,7 @@
     }
   }, 10000);
 
-   /* hero slideshow */
+  /* hero slideshow */
   const frames = Array.from(document.querySelectorAll("#heroMedia .frame"));
   if (frames.length > 1 && !reduce) {
     let i = 0;
@@ -301,7 +301,7 @@
       if (!m) return;
       const im = new Image();
       im.src = m[1];
-      if (im.decode) im.decode().catch(function () {});
+      if (im.decode) im.decode().catch(function () { });
     });
 
     setInterval(function () {
@@ -310,10 +310,10 @@
       const next = frames[i];
 
       prev.classList.remove("on");
-      prev.classList.add("leaving");   
+      prev.classList.add("leaving");
       next.classList.remove("leaving");
       void next.offsetWidth;
-      next.classList.add("on");       
+      next.classList.add("on");
 
       setTimeout(function () {
         prev.classList.remove("leaving");
@@ -388,7 +388,7 @@
   }
 
   /* our love story */
-    /* our love story — mosaic + tráng phim */
+  /* our love story — mosaic + tráng phim */
   (function () {
     var storyData = weddingData.story.map(function (story) {
       return {
@@ -513,7 +513,7 @@
       current = n;
       try {
         await img.decode();
-      } catch (e) {}
+      } catch (e) { }
 
       gsap.set(img, {
         filter: "sepia(1) brightness(1.45) saturate(0.4) blur(6px)",
@@ -784,14 +784,14 @@
         '"' +
         (d === day
           ? ' aria-label="' +
-            weekday +
-            ", " +
-            monthNames[month - 1] +
-            " " +
-            d +
-            ", " +
-            year +
-            '"'
+          weekday +
+          ", " +
+          monthNames[month - 1] +
+          " " +
+          d +
+          ", " +
+          year +
+          '"'
           : "") +
         ">" +
         d +
@@ -887,5 +887,122 @@
         submit.disabled = false;
       }
     });
+  })();
+
+  /* album Cherished Moments — hiệu ứng GSAP */
+  (function () {
+    var scroller = $("albumScroll");
+    if (!scroller || typeof gsap === "undefined" || reduce) return;
+
+    var cards = gsap.utils.toArray("#albumScroll .first-card .card-wrap");
+    var sliders = gsap.utils.toArray("#albumScroll .design-first .slider");
+    var titleSpan = scroller.querySelector(".design-text span");
+
+    /* tạo vệt sáng cho từng ảnh */
+    var sweeps = cards.map(function (card) {
+      var s = document.createElement("div");
+      s.className = "shine-sweep";
+      card.appendChild(s);
+      gsap.set(s, { xPercent: -160, skewX: -18 });
+      return s;
+    });
+
+    /* trạng thái ban đầu của phần vào cảnh */
+    gsap.set(cards, { autoAlpha: 0, y: 40, scale: 0.92 });
+    gsap.set(sliders, { autoAlpha: 0, scaleX: 0, transformOrigin: "left center" });
+
+    /* vệt sáng chạy nối tiếp từng ảnh */
+    var shineTl = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 2.5 });
+    cards.forEach(function (card, i) {
+      var at = i * 0.55;
+      shineTl.fromTo(
+        sweeps[i],
+        { xPercent: -160 },
+        { xPercent: 260, duration: 1.6, ease: "power2.inOut" },
+        at
+      );
+      shineTl.fromTo(
+        card.querySelector("img"),
+        { filter: "brightness(1.18)" },
+        { filter: "brightness(1.42)", duration: 0.7, yoyo: true, repeat: 1, ease: "sine.inOut" },
+        at + 0.2
+      );
+    });
+
+    var sliderTl = gsap.timeline({ paused: true, repeat: -1, yoyo: true });
+    sliderTl.to(sliders, {
+      opacity: 0.35,
+      duration: 1.2,
+      ease: "sine.inOut",
+      stagger: { each: 0.2 },
+    });
+
+    var glowTl = null;
+    if (titleSpan) {
+      glowTl = gsap.to(titleSpan, {
+        textShadow: "0 0 18px rgba(255, 246, 214, 0.95), 0 0 36px rgba(201, 162, 39, 0.6)",
+        duration: 1.6,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        paused: true,
+      });
+    }
+
+    /* hover: ảnh phóng nhẹ (chỉ máy có chuột) */
+    if (window.matchMedia("(hover: hover)").matches) {
+      cards.forEach(function (card) {
+        var im = card.querySelector("img");
+        card.addEventListener("mouseenter", function () {
+          gsap.to(im, { scale: 1.07, duration: 0.6, ease: "power2.out", overwrite: "auto" });
+        });
+        card.addEventListener("mouseleave", function () {
+          gsap.to(im, { scale: 1, duration: 0.6, ease: "power2.out", overwrite: "auto" });
+        });
+      });
+    }
+
+    /* chỉ chạy khi album nằm trong màn hình */
+    var entered = false;
+    new IntersectionObserver(
+      function (entries) {
+        var on = entries[0].isIntersecting;
+        if (on && !entered) {
+          entered = true;
+          gsap.to(sliders, {
+            autoAlpha: 1,
+            scaleX: 1,
+            duration: 0.9,
+            ease: "power2.out",
+            stagger: 0.12,
+          });
+          gsap.to(cards, {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 1.3,
+            ease: "power3.out",
+            stagger: 0.18,
+            onComplete: function () {
+              shineTl.play(0);
+              sliderTl.play(0);
+              if (glowTl) glowTl.play(0);
+            },
+          });
+          return;
+        }
+        if (!entered) return;
+        if (on) {
+          shineTl.play();
+          sliderTl.play();
+          if (glowTl) glowTl.play();
+        } else {
+          shineTl.pause();
+          sliderTl.pause();
+          if (glowTl) glowTl.pause();
+        }
+      },
+      { threshold: 0.25 }
+    ).observe(scroller);
   })();
 })();
