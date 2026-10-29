@@ -489,7 +489,6 @@
       killAuto();
 
       var n = (current + dir + len) % len;
-      if (typeof tick === "function") tick(); // tiếng "tách" nếu bạn đã thêm
 
       if (reduce) {
         render(n);
@@ -594,51 +593,6 @@
     ).observe(stage);
 
     render(0);
-  })();
-
-  /* album Cherished Moments — cuộn dọc thì dải ảnh chạy ngang */
-  (function () {
-    const scroller = $("albumScroll"),
-      frame = $("albumFrame"),
-      track = $("albumTrack");
-    if (!scroller || !frame || !track) return;
-    return;
-    let raf = null;
-    let scrollerTop = 0;
-    let total = 0;
-    let topOffset = 0;
-    let maxX = 0;
-
-    function measure() {
-      const rect = scroller.getBoundingClientRect();
-      scrollerTop = rect.top + window.scrollY;
-      total = rect.height - frame.offsetHeight;
-      topOffset = parseFloat(getComputedStyle(frame).top) || 0;
-      maxX = Math.max(0, track.scrollWidth - frame.clientWidth);
-    }
-
-    function render() {
-      raf = null;
-      const rectTop = scrollerTop - window.scrollY;
-      const progress =
-        total > 0 ? Math.min(1, Math.max(0, (topOffset - rectTop) / total)) : 0;
-      track.style.transform = "translate3d(" + -progress * maxX + "px,0,0)";
-    }
-
-    function onScroll() {
-      if (raf === null) raf = requestAnimationFrame(render);
-    }
-
-    function onGeometryChange() {
-      measure();
-      onScroll();
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onGeometryChange);
-    window.addEventListener("load", onGeometryChange);
-    measure();
-    render();
   })();
 
   (function () {
@@ -889,43 +843,32 @@
     });
   })();
 
-  /* album Cherished Moments — hiệu ứng GSAP */
   (function () {
     var scroller = $("albumScroll");
     if (!scroller || typeof gsap === "undefined" || reduce) return;
 
+    var track = scroller.querySelector("#albumTrack");
     var cards = gsap.utils.toArray("#albumScroll .first-card .card-wrap");
     var sliders = gsap.utils.toArray("#albumScroll .design-first .slider");
     var titleSpan = scroller.querySelector(".design-text span");
 
-    /* tạo vệt sáng cho từng ảnh */
     var sweeps = cards.map(function (card) {
       var s = document.createElement("div");
       s.className = "shine-sweep";
       card.appendChild(s);
-      gsap.set(s, { xPercent: -160, skewX: -18 });
+      gsap.set(s, { xPercent: -160 });
       return s;
     });
 
-    /* trạng thái ban đầu của phần vào cảnh */
-    gsap.set(cards, { autoAlpha: 0, y: 40, scale: 0.92 });
-    gsap.set(sliders, { autoAlpha: 0, scaleX: 0, transformOrigin: "left center" });
+    gsap.set(track, { autoAlpha: 0 });
 
-    /* vệt sáng chạy nối tiếp từng ảnh */
     var shineTl = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 2.5 });
     cards.forEach(function (card, i) {
-      var at = i * 0.55;
       shineTl.fromTo(
         sweeps[i],
         { xPercent: -160 },
-        { xPercent: 260, duration: 1.6, ease: "power2.inOut" },
-        at
-      );
-      shineTl.fromTo(
-        card.querySelector("img"),
-        { filter: "brightness(1.18)" },
-        { filter: "brightness(1.42)", duration: 0.7, yoyo: true, repeat: 1, ease: "sine.inOut" },
-        at + 0.2
+        { xPercent: 260, duration: 6, ease: "power2.inOut", force3D: true },
+        i * 1.1
       );
     });
 
@@ -949,40 +892,16 @@
       });
     }
 
-    /* hover: ảnh phóng nhẹ (chỉ máy có chuột) */
-    if (window.matchMedia("(hover: hover)").matches) {
-      cards.forEach(function (card) {
-        var im = card.querySelector("img");
-        card.addEventListener("mouseenter", function () {
-          gsap.to(im, { scale: 1.07, duration: 0.6, ease: "power2.out", overwrite: "auto" });
-        });
-        card.addEventListener("mouseleave", function () {
-          gsap.to(im, { scale: 1, duration: 0.6, ease: "power2.out", overwrite: "auto" });
-        });
-      });
-    }
-
-    /* chỉ chạy khi album nằm trong màn hình */
     var entered = false;
     new IntersectionObserver(
       function (entries) {
         var on = entries[0].isIntersecting;
         if (on && !entered) {
           entered = true;
-          gsap.to(sliders, {
+          gsap.to(track, {
             autoAlpha: 1,
-            scaleX: 1,
-            duration: 0.9,
-            ease: "power2.out",
-            stagger: 0.12,
-          });
-          gsap.to(cards, {
-            autoAlpha: 1,
-            y: 0,
-            scale: 1,
             duration: 1.3,
-            ease: "power3.out",
-            stagger: 0.18,
+            ease: "power2.out",
             onComplete: function () {
               shineTl.play(0);
               sliderTl.play(0);
@@ -1005,4 +924,192 @@
       { threshold: 0.25 }
     ).observe(scroller);
   })();
+
+  (function () {
+    var p2 = document.querySelector("#albumScroll .p2");
+    if (!p2 || typeof gsap === "undefined" || !window.SplitText || reduce) return;
+    gsap.registerPlugin(SplitText);
+
+    var words = gsap.utils.toArray(p2.querySelectorAll("span"));
+    var fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+
+    fontsReady.then(function () {
+      var split = SplitText.create(words, { type: "chars", charsClass: "p2-char" });
+      var chars = split.chars;
+
+      var wave = gsap.to(chars, {
+        y: -10,
+        duration: 2.1,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        stagger: { each: 0.08, repeat: -1, yoyo: true },
+        paused: true,
+      });
+
+      var glow = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 1.2 });
+      glow.to(chars, {
+        textShadow: "0 0 14px rgba(255, 246, 214, 0.95), 0 0 28px rgba(201, 162, 39, 0.6)",
+        duration: 1,
+        ease: "sine.out",
+        yoyo: true,
+        repeat: 1,
+        stagger: 0.12,
+      });
+      wave.play();
+      glow.play();
+
+    });
+  })();
+  (function () {
+  const card = document.querySelector(".first-card");
+  const track = document.getElementById("albumTrack");
+  if (!card || !track) return;
+
+  const OUT = 8;        
+  const RADIUS = 25 + OUT;
+  const STROKE = 6;
+  const PAD_X = 8;       
+  const PAD_Y = 10;     
+
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("aria-hidden", "true");
+  svg.style.cssText =
+    "position:absolute;pointer-events:none;z-index:5;overflow:visible;";
+  svg.innerHTML =
+    '<defs><mask id="cardBorderMask" maskUnits="userSpaceOnUse"><g id="cbHoles"></g></mask></defs>' +
+    '<rect id="cbRect" fill="none" mask="url(#cardBorderMask)" style="stroke:var(--olive)"></rect>';
+  track.appendChild(svg);
+
+  const maskEl = svg.querySelector("mask");
+  const holesG = svg.querySelector("#cbHoles");
+  const rectEl = svg.querySelector("#cbRect");
+
+  function update() {
+    const W = card.offsetWidth + OUT * 2;
+    const H = card.offsetHeight + OUT * 2;
+    const left = card.offsetLeft - OUT;
+    const top = card.offsetTop - OUT;
+
+    svg.style.left = left + "px";
+    svg.style.top = top + "px";
+    svg.setAttribute("width", W);
+    svg.setAttribute("height", H);
+
+    maskEl.setAttribute("x", -20);
+    maskEl.setAttribute("y", -20);
+    maskEl.setAttribute("width", W + 40);
+    maskEl.setAttribute("height", H + 40);
+
+    rectEl.setAttribute("x", STROKE / 2);
+    rectEl.setAttribute("y", STROKE / 2);
+    rectEl.setAttribute("width", W - STROKE);
+    rectEl.setAttribute("height", H - STROKE);
+    rectEl.setAttribute("rx", RADIUS);
+    rectEl.setAttribute("stroke-width", STROKE);
+
+    const sr = svg.getBoundingClientRect(); // gốc toạ độ của svg trên màn hình
+    const boxes = [];
+
+    // các phần tử xoay (p1, p3), khối slider, design-block: lấy bounding rect
+    track.querySelectorAll(".design-text:not(.p2), .design-first, .design-last, .design-block")
+      .forEach((el) => {
+        const r = el.getBoundingClientRect();
+        boxes.push({ x: r.left - sr.left, y: r.top - sr.top, w: r.width, h: r.height });
+      });
+
+    // dòng chữ p2: dùng kích thước layout gốc, không bị GSAP transform làm lệch
+    const p2 = track.querySelector(".p2");
+    if (p2) {
+      boxes.push({
+        x: p2.offsetLeft - left,
+        y: p2.offsetTop - top,
+        w: p2.offsetWidth,
+        h: p2.offsetHeight,
+      });
+    }
+
+    let html = `<rect x="-20" y="-20" width="${W + 40}" height="${H + 40}" fill="white"/>`;
+    boxes.forEach((b) => {
+      html += `<rect x="${b.x - PAD_X}" y="${b.y - PAD_Y}" width="${b.w + PAD_X * 2}" height="${b.h + PAD_Y * 2}" fill="black"/>`;
+    });
+    holesG.innerHTML = html;
+  }
+
+  window.updateCardBorder = update;
+  update();
+  window.addEventListener("load", update);
+  window.addEventListener("resize", update);
+  if (document.fonts) document.fonts.ready.then(update);
+  if (window.ScrollTrigger) ScrollTrigger.addEventListener("refresh", update);
+  if ("ResizeObserver" in window) {
+    const ro = new ResizeObserver(update);
+    ro.observe(card);
+    ro.observe(track);
+  }
+})();
+
+(function () {
+  const scroller = document.getElementById("albumScroll");
+  const wraps = gsap.utils.toArray(".first-card .card-wrap");
+  if (!scroller || !wraps.length || !window.gsap) return;
+
+  const dirs = [[-5, -3], [5, 3], [-3, 5], [4, -5], [-5, 3]];
+
+  const drifts = wraps.map(function (w, i) {
+    const img = w.querySelector("img");
+    const d = dirs[i % dirs.length];
+    gsap.set(img, { scale: 1.15 });
+    return gsap.to(img, {
+      xPercent: d[0],
+      yPercent: d[1],
+      scale: 1.32,
+      duration: 6 + (i % 4) * 1.3,
+      ease: "sine.inOut",
+      yoyo: true,
+      repeat: -1,
+      paused: true,
+    });
+  });
+
+  new IntersectionObserver(function (es) {
+    drifts.forEach(function (t) {
+      es[0].isIntersecting ? t.play() : t.pause();
+    });
+  }, { threshold: 0.2 }).observe(scroller);
+
+  if (matchMedia("(hover: hover)").matches) {
+    const design = gsap.utils.toArray(
+      "#albumScroll .design-text, #albumScroll .design-first, #albumScroll .design-last, #albumScroll .design-block"
+    );
+
+    wraps.forEach(function (w) {
+      const img = w.querySelector("img");
+
+      w.addEventListener("mouseenter", function () {
+        drifts[wraps.indexOf(w)].pause();
+        gsap.to(img, { scale: 1.4, duration: 0.6, ease: "power2.out", overwrite: "auto" });
+        gsap.to(
+          wraps.filter(function (o) { return o !== w; }).concat(design),
+          { filter: "brightness(0.6)", duration: 0.45, overwrite: "auto" }
+        );
+      });
+
+      w.addEventListener("mouseleave", function () {
+        const drift = drifts[wraps.indexOf(w)];
+        gsap.to(img, {
+          scale: 1.2,
+          duration: 0.6,
+          ease: "power2.out",
+          overwrite: "auto",
+          onComplete: function () {
+            if (!w.matches(":hover")) drift.play();
+          },
+        });
+        gsap.to(wraps.concat(design), { filter: "brightness(1)", duration: 0.45, overwrite: "auto" });
+      });
+    });
+  }
+})();
 })();
