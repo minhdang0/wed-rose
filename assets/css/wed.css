@@ -417,8 +417,8 @@ body.opened .music-toggle:active {
 /* ================= HERO ================= */
 .hero {
   position: relative;
-  min-height: 100svh;
   min-height: 100vh;
+  min-height: 100svh;
   padding: 0;
   display: flex;
   align-items: flex-end;
@@ -1274,18 +1274,13 @@ footer .sub {
   overflow: hidden;
 }
 
-/* ================= CHERISHED MOMENTS — CUỘN NGANG ================= */
+/* ================= ALBUM ================= */
 .album-scroll {
+  --album-h: 100svh;
   position: relative;
-  height: 400svh;
-}
-
-.album-frame {
-  position: sticky;
-  top: 5svh;
-  height: 90svh;
-  overflow: hidden;
   isolation: isolate;
+  height: var(--album-h);
+  padding: 2rem 0 3rem;
 }
 
 .album-scroll::before {
@@ -1294,53 +1289,41 @@ footer .sub {
   inset: 0;
   z-index: -1;
   background: url("../img/image6.jpg") center / cover no-repeat;
-  filter: grayscale(1) !important;
-  /* ảnh nền thành màu xám */
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
+  filter: brightness(0.8);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 6%, #000 94%, transparent);
+}
+
+.album-frame {
+  position: relative;
+  height: 100%;
+  container-type: inline-size;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  cursor: grab;
+}
+
+.album-frame::-webkit-scrollbar {
+  display: none;
 }
 
 .album-track {
+  --slide-w: min(78cqw, calc(min(78svh, 40rem) * 0.75));
+  position: relative;
   display: flex;
   align-items: center;
   width: max-content;
   height: 100%;
-  gap: clamp(12px, 2vw, 24px);
-  padding: 0 clamp(12px, 2vw, 24px);
-  will-change: transform;
-  position: relative;
+  gap: 1rem;
+  padding: 0 calc(50cqw - var(--slide-w) / 2);
 }
 
 .panel {
   position: relative;
   flex: 0 0 auto;
-  width: 620px;
-  height: 560px;
-}
-
-.shot {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.shot img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 8px;
-  box-shadow: 0 24px 50px -22px rgba(20, 2, 2, 0.45);
-  object-fit: cover;
-  filter: brightness(1.18);
-}
-
-.panel h3,
-.panel p {
-  position: absolute;
-  margin: 0;
 }
 
 .slider {
@@ -1363,38 +1346,17 @@ footer .sub {
 }
 
 
-@media (max-height: 640px) {
-  .panel {
-    transform: scale(0.8);
-  }
-}
-
-@media (max-width: 720px) {
-  .album-scroll {
-    height: 300svh;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .album-scroll {
-    height: auto;
-  }
-
-  .album-frame {
-    position: relative;
-    top: 0;
-    overflow-x: auto;
-  }
-}
-
 .first-card {
-  width: 1400px;
-  height: 90%;
+  width: calc(var(--album-h) * 1.3 * 0.83);
+  height: 80%;
+  max-height: none;
+  flex: 0 0 auto;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(2, 1fr);
   border-radius: 25px;
   padding: 0.5rem;
+  gap: 8px;
 }
 
 .card-wrap {
@@ -1413,18 +1375,6 @@ footer .sub {
   z-index: 3;
 }
 
-.card-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 0.6rem;
-  padding: 1rem;
-  background-color: var(--olive);
-  color: var(--paper);
-}
-
 .img-tlr {
   overflow: hidden;
   border-top-right-radius: 25px;
@@ -1433,28 +1383,6 @@ footer .sub {
 .img-btl {
   overflow: hidden;
   border-bottom-left-radius: 25px;
-}
-
-.card-content.first-content {
-  border-top-left-radius: 25px;
-}
-
-.card-content.last-content {
-  border-bottom-right-radius: 25px;
-}
-
-.card-wrap span {
-  font-family: var(--font-heading);
-  font-size: 2rem;
-  line-height: 1.1;
-}
-
-/* ghi đè rule ".panel p { position: absolute }" */
-.card-wrap p {
-  position: static;
-  margin: 0;
-  font-size: 0.9rem;
-  font-style: italic;
 }
 
 .design-first {
@@ -1470,6 +1398,19 @@ footer .sub {
   top: 6rem;
 }
 
+.design-last {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.4rem;
+  left: 61rem;
+  width: 10rem;
+  height: auto;
+  top: 34rem;
+}
+
 .design-text {
   position: absolute;
   width: max-content;
@@ -1477,221 +1418,51 @@ footer .sub {
   font-weight: 400;
   z-index: 2;
   color: var(--paper);
-  font-size: 3.2rem;
-  transform: rotate(-90deg);
+  
 }
 
 .p1 {
   top: 11rem;
   left: -4.5rem;
-}
-/* ===== Thẻ 1: ánh kim chạy ngang ===== */
-.first-content span {
-  background: linear-gradient(100deg, var(--paper) 35%, #fff6d6 50%, var(--paper) 65%);
-  background-size: 250% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  animation: shimmer 3.5s linear infinite;
+  font-size: 3.2rem;
+  transform: rotate(-90deg);
 }
 
-.first-content p {
-  animation: textRise 1s ease both;
-  animation-delay: 0.3s;
+.p2 {
+  display: flex;
+  gap: 0.4rem;
+  top: 2rem;
+  left: 19rem;
+  z-index: -1;
 }
 
-@keyframes shimmer {
-  from {
-    background-position: 150% 0;
-  }
+.p2 span {
+  font-size: 4rem;
 
-  to {
-    background-position: -50% 0;
-  }
 }
 
-@keyframes textRise {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
+.p3 {
+   top: 39rem;
+  left: 61rem;
+  font-size: 3.2rem;
+  transform: rotate(90deg);
 }
 
-/* ===== Thẻ 2: phát sáng nhịp thở + đường kẻ ===== */
-.last-content span {
-  animation: glowPulse 3s ease-in-out infinite;
-}
-
-.last-content span::after {
-  content: "";
-  display: block;
-  height: 1px;
-  margin: 0.5rem auto 0;
-  background: var(--paper);
-  animation: lineGrow 3s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-
-  0%,
-  100% {
-    text-shadow: 0 0 0 rgba(255, 246, 214, 0);
-    letter-spacing: 0.02em;
-  }
-
-  50% {
-    text-shadow: 0 0 14px rgba(255, 246, 214, 0.85);
-    letter-spacing: 0.08em;
-  }
-}
-
-@keyframes lineGrow {
-
-  0%,
-  100% {
-    width: 20%;
-    opacity: 0.5;
-  }
-
-  50% {
-    width: 70%;
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-  .first-content span,
-  .first-content p,
-  .last-content span,
-  .last-content span::after {
-    animation: none;
-  }
-}
-
-/* ===== Ô 2: zoom chậm kiểu phim ===== */
-.first-card .card-wrap:nth-child(2) img {
-  animation: kenBurns 9s ease-in-out infinite alternate;
-}
-
-@keyframes kenBurns {
-  from {
-    transform: scale(1);
-    filter: brightness(1.18);
-  }
-
-  to {
-    transform: scale(1.14);
-    filter: brightness(1.18);
-  }
-}
-
-/* ===== Ô 3: vệt sáng quét chéo ===== */
-.first-card .card-wrap:nth-child(3)::after {
-  content: "";
+.design-block {
   position: absolute;
-  top: 0;
-  left: -60%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(100deg, transparent, rgba(255, 246, 214, 0.55), transparent);
-  transform: skewX(-18deg);
-  animation: sweep 4.5s ease-in-out infinite;
-  pointer-events: none;
+  width: 66rem;
+  height: 3rem;
+  background-color: var(--olive);
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  left: 3.5rem;
+  bottom: 5rem;
 }
-
-@keyframes sweep {
-  0% {
-    left: -60%;
-  }
-
-  55%,
-  100% {
-    left: 130%;
-  }
-}
-
-/* ===== Ô 4: ảnh trôi chậm qua lại ===== */
-.first-card .card-wrap:nth-child(4) img {
-  width: 125%;
-  max-width: none;
-  animation: panSide 10s ease-in-out infinite alternate;
-}
-
-@keyframes panSide {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-20%);
-  }
-}
-
-/* ===== Ô 5: nhịp thở sáng tối + zoom nhẹ ===== */
-.first-card .card-wrap:nth-child(5) img {
-  animation: breathe 5s ease-in-out infinite;
-}
-
-@keyframes breathe {
-
-  0%,
-  100% {
-    filter: brightness(1.05) saturate(0.9);
-    transform: scale(1);
-  }
-
-  50% {
-    filter: brightness(1.28) saturate(1.2);
-    transform: scale(1.06);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-  .first-card .card-wrap img,
-  .first-card .card-wrap::after {
-    animation: none;
-  }
-}
-
-/* ===== Vệt sáng quét chéo, dùng chung ===== */
-.shine {
-  overflow: hidden;
-  border-radius: 8px;
-}
-
-.shine::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -60%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(100deg, transparent, rgba(255, 246, 214, 0.55), transparent);
-  transform: skewX(-18deg);
-  animation: sweep 4.5s ease-in-out infinite;
-  animation-delay: var(--delay, 0s);
-  pointer-events: none;
-  z-index: 5;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .shine::after {
-    animation: none;
-  }
-}
-
 /* ================= INVITE — NHÀ TRAI / NHÀ GÁI ================= */
 
 .invite {
-  --inv-line: rgba(78, 7, 7, 0.25);
+  --inv-ink: #2a1408;
+  --inv-line: rgba(78, 7, 7, 0.4);
 
   margin: 0 auto;
   max-width: 1120px;
@@ -2513,31 +2284,6 @@ footer .sub {
   color: #2a1408;
 }
 
-.first-card .card-wrap img,
-.first-card .card-wrap::after,
-.first-content span,
-.last-content span,
-.last-content span::after,
-.invite .mid-info,
-.invite .design-mid {
-  animation-play-state: paused;
-}
-
-.is-visible .card-wrap img,
-.is-visible .card-wrap::after,
-.is-visible .first-content span,
-.is-visible .last-content span,
-.is-visible .last-content span::after,
-.is-visible.invite .mid-info,
-.is-visible.invite .design-mid {
-  animation-play-state: running;
-}
-
-.invite {
-  --inv-ink: #2a1408;
-  --inv-line: rgba(78, 7, 7, 0.4);
-}
-
 .invite .groom-info p,
 .invite .bride-info p,
 .invite .inv-label,
@@ -2665,23 +2411,6 @@ footer .sub {
   .p2-a img {
     object-position: center 20%;
   }
-
-  /* Thẻ 3: lưới 3x2, mỗi ô ~178×250px (tỉ lệ dọc 5:7), không phụ thuộc svh */
-  .first-card {
-    width: 72rem;
-    height: 33rem;
-    flex: 0 0 auto;
-  }
-
-  .first-card .card-wrap img {
-    object-position: center 25%;
-  }
-}
-
-#albumScroll *,
-#albumScroll *::before,
-#albumScroll *::after {
-  animation: none !important;
 }
 
 .title-stack .t-line {
@@ -2703,284 +2432,40 @@ footer .sub {
   overflow-x: clip;
 }
 
-/* Album: cuộn ngang thật, ẩn thanh cuộn */
-.album-scroll {
-  position: relative;
-  height: 90svh;
-  isolation: isolate;
-}
-
-/* nền chuyển ra ngoài vùng cuộn để không trôi theo ảnh */
-.album-scroll::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: url("../img/image6.jpg") center / cover no-repeat;
-  filter: brightness(0.8);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
-}
-
-.album-frame::before {
-  content: none;
-}
-
-.album-frame {
-  position: relative;
-  top: 0;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  /* Firefox */
-}
-
-.album-frame::-webkit-scrollbar {
-  display: none;
-}
-
-/* Chrome, Safari */
-
-.album-track {
-  transform: none !important;
-  /* bỏ transform do JS đặt */
-  will-change: auto;
-}
-
-@media (max-width: 720px) {
-  .album-scroll {
-    height: 90svh;
-  }
-}
-
-/* ===== ALBUM: cuộn ngang thật, khung = 100% màn hình ===== */
-.album-scroll {
-  --album-h: 100svh;
-  /* chiều cao khung album */
-  position: relative;
-  height: var(--album-h);
-  isolation: isolate;
-}
-
-/* ảnh nền phủ 100% khung (cao 100%, rộng 100%) */
-.album-scroll::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: url("../img/image6.jpg") center / cover no-repeat;
-  /* mờ nhẹ ở mép trên/dưới cho hòa vào trang; xoá 2 dòng mask nếu muốn 100% không mờ */
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
-}
-
-.album-frame::before {
-  content: none;
-}
-
-.album-frame {
-  position: relative;
-  top: 0;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.album-frame::-webkit-scrollbar {
-  display: none;
-}
-
-.album-track {
-  height: 100%;
-  transform: none !important;
-  will-change: auto;
-}
-
-/* thẻ 3 chiếm 90% chiều cao khung, ô ảnh giữ tỉ lệ dọc */
-.first-card {
-  height: 80%;
-  max-height: none;
-  width: calc(var(--album-h) *1.3* 0.83);
-  flex: 0 0 auto;
-}
-
-.first-card .card-wrap img {
-  object-position: center 25%;
-}
-
-@media (max-width: 720px) {
-  .album-scroll {
-    height: var(--album-h);
-  }
-}
-
-/* ===== ALBUM: từng ảnh dọc một ===== */
-.album-scroll {
-  --slide-h: min(78svh, 40rem);
-  /* chiều cao tối đa của một slide */
-  position: relative;
-  padding: 2rem 0 3rem;
-  isolation: isolate;
-}
-
-.album-scroll::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: url("../img/image6.jpg") center / cover no-repeat;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
-}
-
-.album-frame {
-  container-type: inline-size;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  cursor: grab;
-}
-
-.album-frame::-webkit-scrollbar {
-  display: none;
-}
-
-.album-frame.dragging {
-  scroll-snap-type: none;
-  cursor: grabbing;
-}
-
-.album-frame:focus-visible {
-  outline-offset: -4px;
-}
-
-.album-track {
-  --slide-w: min(78cqw, calc(var(--slide-h) * 0.75));
-  /* tỉ lệ 3:4 */
-  display: flex;
-  gap: 1rem;
-  width: max-content;
-  /* chừa hai đầu để slide đầu và cuối cũng nằm giữa */
-  padding: 0 calc(50cqw - var(--slide-w) / 2);
-}
-
-.slide {
-  flex: 0 0 var(--slide-w);
-  aspect-ratio: 3 / 4;
-  margin: 0;
-  position: relative;
-  overflow: hidden;
-  border: 4px solid var(--olive);
-  border-radius: 12px;
-  background: var(--olive);
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
-}
-
-.slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 25%;
-  pointer-events: none;
-  /* để kéo chuột không bị "bắt" ảnh */
-  -webkit-user-drag: none;
-  user-select: none;
-}
-
-.slide-note {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.8rem;
-  padding: 1.5rem;
-  text-align: center;
-  color: var(--paper);
-}
-
-.slide-note span {
-  font-family: var(--font-heading);
-  font-size: 2.6rem;
-  line-height: 1.1;
-}
-
-.slide-note p {
-  font-size: 0.95rem;
-  font-style: italic;
-}
-
-.album-nav {
-  position: absolute;
-  top: 50%;
-  z-index: 3;
-  width: 2.6rem;
-  height: 2.6rem;
-  transform: translateY(-50%);
-  border: 1px solid rgba(201, 162, 39, 0.8);
-  border-radius: 50%;
-  background: var(--olive);
-  color: #e8d2a0;
-  font-size: 1.6rem;
-  line-height: 1;
-  cursor: pointer;
-  transition:
-    opacity 0.25s ease,
-    background 0.25s ease;
-}
-
-.album-prev {
-  left: 0.6rem;
-}
-
-.album-next {
-  right: 0.6rem;
-}
-
-.album-nav:hover:not(:disabled) {
-  background: #7a1414;
-}
-
-.album-nav:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-
-.album-hint {
-  margin-top: 1rem;
-  text-align: center;
-  font-family: var(--font-editorial);
-  font-style: italic;
-  color: var(--olive);
-}
-
-/* điện thoại cảm ứng: vuốt là đủ, không cần nút */
-@media (hover: none) {
-
-  .album-nav,
-  .album-hint {
-    display: none;
-  }
-}
-
 /* ===== ALBUM: vệt sáng GSAP ===== */
+/* ===== ALBUM: vệt sáng GSAP (chỉ dùng transform nên mượt) ===== */
 .shine-sweep {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 5;
-  width: 45%;
+  width: 60%;
   height: 100%;
   pointer-events: none;
-  background: linear-gradient(100deg, transparent, rgba(255, 246, 214, 0.65), transparent);
+  /* góc 105deg thay cho skewX, không cần biến dạng phần tử */
+  background: linear-gradient(105deg, transparent 0%, rgba(255, 246, 214, 0.6) 50%, transparent 100%);
+  will-change: transform;
+}
+
+.first-card .card-wrap {
+  transform: translateZ(0); /* mỗi ảnh một layer GPU riêng */
+}
+
+.first-card .card-wrap img {
+  object-position: center 25%;
+  box-shadow: none; /* bóng bị overflow:hidden cắt, chỉ tốn tài nguyên */
+}
+
+.slider {
+  will-change: opacity; /* slider có drop-shadow blur, giữ cache để chỉ đổi opacity */
+}
+
+.p2 {
+  cursor: pointer;
+}
+
+.p2 span,
+.p2-char {
+  display: inline-block;
   will-change: transform;
 }
