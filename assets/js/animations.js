@@ -175,14 +175,6 @@
             .from(".sf-edge", { opacity: 0, duration: 0.8, stagger: 0.1 }, "-=0.6");
     }
 
-    function album() {
-        const scroller = $("#albumScroll");
-        if (!scroller) return;
-        tl(scroller, "top 85%")
-            .from("#albumFrame", { opacity: 0, y: 40, duration: 1.1, ease: "power2.out", clearProps: "opacity,transform" })
-            .from(".first-card .shot", { opacity: 0, duration: 0.8, stagger: 0.08, clearProps: "opacity" }, "-=0.6");
-    }
-
     function invite() {
         const mid = $(".mid-info");
         if (mid) tl(mid, "top 90%").from(mid, { scale: 0.6, opacity: 0, duration: 1, ease: "back.out(2)" });
@@ -292,7 +284,6 @@
         welcome();
         loveLetter();
         story();
-        album();
         invite();
         countdown();
         wishesAndMap();
@@ -326,4 +317,5 @@
         });
         mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     }
+    
 })();
