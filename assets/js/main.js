@@ -1,4 +1,24 @@
 (async function () {
+  (function () {
+    var lastW = 0;
+    function setAppHeight() {
+      var w = window.innerWidth;
+      if (w === lastW) return; // chỉ đổi chiều cao (thanh công cụ) thì bỏ qua
+      lastW = w;
+      // lấy giá trị nhỏ nhất: lúc thanh công cụ đang hiện, nên không bao giờ bị hụt
+      var h = Math.min(
+        window.innerHeight,
+        document.documentElement.clientHeight || 9999,
+      );
+      document.documentElement.style.setProperty("--app-h", h + "px");
+    }
+    setAppHeight();
+    window.addEventListener("resize", setAppHeight);
+    window.addEventListener("orientationchange", function () {
+      lastW = 0;
+      setTimeout(setAppHeight, 300);
+    });
+  })();
   let weddingData;
   try {
     const response = await fetch("./assets/data/wedding.json");
@@ -196,7 +216,7 @@
     .forEach(function (element) {
       const schedule =
         weddingData.event.schedule[
-        Number(element.getAttribute("data-wedding-schedule"))
+          Number(element.getAttribute("data-wedding-schedule"))
         ];
       const label = element.querySelector("h3");
       const time = element.querySelector("p");
@@ -218,6 +238,7 @@
   };
   const params = new URLSearchParams(location.search);
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const lite = window.matchMedia("(max-width: 720px), (hover: none)").matches;
 
   /* cá nhân hoá */
   let guest = params.get("to");
@@ -304,7 +325,9 @@
 
     // giải mã sẵn ảnh nền để lúc chuyển không bị khựng
     frames.forEach(function (f) {
-      const m = /url\(["']?(.*?)["']?\)/.exec(getComputedStyle(f).backgroundImage);
+      const m = /url\(["']?(.*?)["']?\)/.exec(
+        getComputedStyle(f).backgroundImage,
+      );
       if (!m) return;
       const im = new Image();
       im.src = m[1];
@@ -312,7 +335,12 @@
     });
 
     setInterval(function () {
-      if (!heroVisible || document.hidden || !document.body.classList.contains("opened")) return;
+      if (
+        !heroVisible ||
+        document.hidden ||
+        !document.body.classList.contains("opened")
+      )
+        return;
 
       const prev = frames[i];
       i = (i + 1) % frames.length;
@@ -508,7 +536,12 @@
       }
 
       // 1) chữ cũ mờ đi, các ô olive nở ra từ giữa
-      gsap.to([yearEl, textEl], { opacity: 0, y: -10, duration: 0.35, ease: "power1.in" });
+      gsap.to([yearEl, textEl], {
+        opacity: 0,
+        y: -10,
+        duration: 0.35,
+        ease: "power1.in",
+      });
       await tw(tiles, {
         scale: 1.04, // >1 để không hở khe giữa các ô
         duration: 0.45,
@@ -521,7 +554,7 @@
       current = n;
       try {
         await img.decode();
-      } catch (e) { }
+      } catch (e) {}
 
       gsap.set(img, {
         filter: "sepia(1) brightness(1.45) saturate(0.4) blur(6px)",
@@ -747,14 +780,14 @@
         '"' +
         (d === day
           ? ' aria-label="' +
-          weekday +
-          ", " +
-          monthNames[month - 1] +
-          " " +
-          d +
-          ", " +
-          year +
-          '"'
+            weekday +
+            ", " +
+            monthNames[month - 1] +
+            " " +
+            d +
+            ", " +
+            year +
+            '"'
           : "") +
         ">" +
         d +
@@ -861,44 +894,49 @@
     var sliders = gsap.utils.toArray("#albumScroll .design-first .slider");
     var titleSpan = scroller.querySelector(".design-text span");
 
-    var sweeps = cards.map(function (card) {
-      var s = document.createElement("div");
-      s.className = "shine-sweep";
-      card.appendChild(s);
-      gsap.set(s, { xPercent: -160 });
-      return s;
-    });
-
     gsap.set(track, { autoAlpha: 0 });
 
-    var shineTl = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 2.5 });
-    cards.forEach(function (card, i) {
-      shineTl.fromTo(
-        sweeps[i],
-        { xPercent: -160 },
-        { xPercent: 260, duration: 6, ease: "power2.inOut", force3D: true },
-        i * 1.1
-      );
-    });
-
-    var sliderTl = gsap.timeline({ paused: true, repeat: -1, yoyo: true });
-    sliderTl.to(sliders, {
-      opacity: 0.35,
-      duration: 1.2,
-      ease: "sine.inOut",
-      stagger: { each: 0.2 },
-    });
-
+    var shineTl = null;
+    var sliderTl = null;
     var glowTl = null;
-    if (titleSpan) {
-      glowTl = gsap.to(titleSpan, {
-        textShadow: "0 0 18px rgba(255, 246, 214, 0.95), 0 0 36px rgba(201, 162, 39, 0.6)",
-        duration: 1.6,
-        ease: "sine.inOut",
-        yoyo: true,
-        repeat: -1,
-        paused: true,
+    if (!lite) {
+      var sweeps = cards.map(function (card) {
+        var s = document.createElement("div");
+        s.className = "shine-sweep";
+        card.appendChild(s);
+        gsap.set(s, { xPercent: -160 });
+        return s;
       });
+
+      shineTl = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 2.5 });
+      cards.forEach(function (card, i) {
+        shineTl.fromTo(
+          sweeps[i],
+          { xPercent: -160 },
+          { xPercent: 260, duration: 6, ease: "power2.inOut", force3D: true },
+          i * 1.1,
+        );
+      });
+
+      sliderTl = gsap.timeline({ paused: true, repeat: -1, yoyo: true });
+      sliderTl.to(sliders, {
+        opacity: 0.35,
+        duration: 1.2,
+        ease: "sine.inOut",
+        stagger: { each: 0.2 },
+      });
+
+      if (titleSpan) {
+        glowTl = gsap.to(titleSpan, {
+          textShadow:
+            "0 0 18px rgba(255, 246, 214, 0.95), 0 0 36px rgba(201, 162, 39, 0.6)",
+          duration: 1.6,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+          paused: true,
+        });
+      }
     }
 
     var entered = false;
@@ -912,8 +950,8 @@
             duration: 1.3,
             ease: "power2.out",
             onComplete: function () {
-              shineTl.play(0);
-              sliderTl.play(0);
+              if (shineTl) shineTl.play(0);
+              if (sliderTl) sliderTl.play(0);
               if (glowTl) glowTl.play(0);
             },
           });
@@ -921,204 +959,290 @@
         }
         if (!entered) return;
         if (on) {
-          shineTl.play();
-          sliderTl.play();
+          if (shineTl) shineTl.play();
+          if (sliderTl) sliderTl.play();
           if (glowTl) glowTl.play();
         } else {
-          shineTl.pause();
-          sliderTl.pause();
+          if (shineTl) shineTl.pause();
+          if (sliderTl) sliderTl.pause();
           if (glowTl) glowTl.pause();
         }
       },
-      { threshold: 0.25 }
+      { threshold: 0.25 },
     ).observe(scroller);
   })();
 
   (function () {
     var p2 = document.querySelector("#albumScroll .p2");
-    if (!p2 || typeof gsap === "undefined" || !window.SplitText || reduce) return;
+    var scroller = $("albumScroll");
+    if (!p2 || !scroller || reduce) return;
+
+    if (lite) {
+      p2.classList.add("p2-lite");
+      new IntersectionObserver(
+        function (es) {
+          p2.classList.toggle("is-on", es[0].isIntersecting);
+        },
+        { threshold: 0.2 },
+      ).observe(scroller);
+      return;
+    }
+
+    if (typeof gsap === "undefined") return;
+
+    var tweens = [];
+
+    function play() {
+      tweens.forEach(function (t) {
+        t.play();
+      });
+    }
+    function pause() {
+      tweens.forEach(function (t) {
+        t.pause();
+      });
+    }
+
+    // Bản đầy đủ cho desktop
+    if (!window.SplitText) return;
     gsap.registerPlugin(SplitText);
 
     var words = gsap.utils.toArray(p2.querySelectorAll("span"));
-    var fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+    var fontsReady =
+      document.fonts && document.fonts.ready
+        ? document.fonts.ready
+        : Promise.resolve();
 
     fontsReady.then(function () {
-      var split = SplitText.create(words, { type: "chars", charsClass: "p2-char" });
+      var split = SplitText.create(words, {
+        type: "chars",
+        charsClass: "p2-char",
+      });
       var chars = split.chars;
 
-      var wave = gsap.to(chars, {
-        y: -10,
-        duration: 2.1,
-        ease: "sine.inOut",
-        yoyo: true,
-        repeat: -1,
-        stagger: { each: 0.08, repeat: -1, yoyo: true },
-        paused: true,
-      });
+      tweens.push(
+        gsap.to(chars, {
+          y: -10,
+          duration: 2.1,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+          stagger: { each: 0.08, repeat: -1, yoyo: true },
+          paused: true,
+        }),
+      );
 
       var glow = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 1.2 });
       glow.to(chars, {
-        textShadow: "0 0 14px rgba(255, 246, 214, 0.95), 0 0 28px rgba(201, 162, 39, 0.6)",
+        textShadow:
+          "0 0 14px rgba(255, 246, 214, 0.95), 0 0 28px rgba(201, 162, 39, 0.6)",
         duration: 1,
         ease: "sine.out",
         yoyo: true,
         repeat: 1,
         stagger: 0.12,
       });
-      wave.play();
-      glow.play();
+      tweens.push(glow);
 
+      new IntersectionObserver(
+        function (es) {
+          es[0].isIntersecting ? play() : pause();
+        },
+        { threshold: 0.2 },
+      ).observe(scroller);
     });
   })();
   (function () {
-  const card = document.querySelector(".first-card");
-  const track = document.getElementById("albumTrack");
-  if (!card || !track) return;
+    const card = document.querySelector(".first-card");
+    const track = document.getElementById("albumTrack");
+    if (!card || !track) return;
 
-  const OUT = 8;        
-  const RADIUS = 25 + OUT;
-  const STROKE = 6;
-  const PAD_X = 8;       
-  const PAD_Y = 10;     
+    const OUT = 8;
+    const RADIUS = 25 + OUT;
+    const STROKE = 6;
+    const PAD_X = 8;
+    const PAD_Y = 10;
 
-  const NS = "http://www.w3.org/2000/svg";
-  const svg = document.createElementNS(NS, "svg");
-  svg.setAttribute("aria-hidden", "true");
-  svg.style.cssText =
-    "position:absolute;pointer-events:none;z-index:5;overflow:visible;";
-  svg.innerHTML =
-    '<defs><mask id="cardBorderMask" maskUnits="userSpaceOnUse"><g id="cbHoles"></g></mask></defs>' +
-    '<rect id="cbRect" fill="none" mask="url(#cardBorderMask)" style="stroke:var(--olive)"></rect>';
-  track.appendChild(svg);
+    const NS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("aria-hidden", "true");
+    svg.style.cssText =
+      "position:absolute;pointer-events:none;z-index:5;overflow:visible;";
+    svg.innerHTML =
+      '<defs><mask id="cardBorderMask" maskUnits="userSpaceOnUse"><g id="cbHoles"></g></mask></defs>' +
+      '<rect id="cbRect" fill="none" mask="url(#cardBorderMask)" style="stroke:var(--olive)"></rect>';
+    track.appendChild(svg);
 
-  const maskEl = svg.querySelector("mask");
-  const holesG = svg.querySelector("#cbHoles");
-  const rectEl = svg.querySelector("#cbRect");
+    const maskEl = svg.querySelector("mask");
+    const holesG = svg.querySelector("#cbHoles");
+    const rectEl = svg.querySelector("#cbRect");
 
-  function update() {
-    const W = card.offsetWidth + OUT * 2;
-    const H = card.offsetHeight + OUT * 2;
-    const left = card.offsetLeft - OUT;
-    const top = card.offsetTop - OUT;
+    function update() {
+      const W = card.offsetWidth + OUT * 2;
+      const H = card.offsetHeight + OUT * 2;
+      const left = card.offsetLeft - OUT;
+      const top = card.offsetTop - OUT;
 
-    svg.style.left = left + "px";
-    svg.style.top = top + "px";
-    svg.setAttribute("width", W);
-    svg.setAttribute("height", H);
+      svg.style.left = left + "px";
+      svg.style.top = top + "px";
+      svg.setAttribute("width", W);
+      svg.setAttribute("height", H);
 
-    maskEl.setAttribute("x", -20);
-    maskEl.setAttribute("y", -20);
-    maskEl.setAttribute("width", W + 40);
-    maskEl.setAttribute("height", H + 40);
+      maskEl.setAttribute("x", -20);
+      maskEl.setAttribute("y", -20);
+      maskEl.setAttribute("width", W + 40);
+      maskEl.setAttribute("height", H + 40);
 
-    rectEl.setAttribute("x", STROKE / 2);
-    rectEl.setAttribute("y", STROKE / 2);
-    rectEl.setAttribute("width", W - STROKE);
-    rectEl.setAttribute("height", H - STROKE);
-    rectEl.setAttribute("rx", RADIUS);
-    rectEl.setAttribute("stroke-width", STROKE);
+      rectEl.setAttribute("x", STROKE / 2);
+      rectEl.setAttribute("y", STROKE / 2);
+      rectEl.setAttribute("width", W - STROKE);
+      rectEl.setAttribute("height", H - STROKE);
+      rectEl.setAttribute("rx", RADIUS);
+      rectEl.setAttribute("stroke-width", STROKE);
 
-    const sr = svg.getBoundingClientRect(); // gốc toạ độ của svg trên màn hình
-    const boxes = [];
+      const sr = svg.getBoundingClientRect(); // gốc toạ độ của svg trên màn hình
+      const boxes = [];
 
-    // các phần tử xoay (p1, p3), khối slider, design-block: lấy bounding rect
-    track.querySelectorAll(".design-text:not(.p2), .design-first, .design-last, .design-block")
-      .forEach((el) => {
-        const r = el.getBoundingClientRect();
-        boxes.push({ x: r.left - sr.left, y: r.top - sr.top, w: r.width, h: r.height });
+      // các phần tử xoay (p1, p3), khối slider, design-block: lấy bounding rect
+      track
+        .querySelectorAll(
+          ".design-text:not(.p2), .design-first, .design-last, .design-block",
+        )
+        .forEach((el) => {
+          const r = el.getBoundingClientRect();
+          boxes.push({
+            x: r.left - sr.left,
+            y: r.top - sr.top,
+            w: r.width,
+            h: r.height,
+          });
+        });
+
+      // dòng chữ p2: dùng kích thước layout gốc, không bị GSAP transform làm lệch
+      const p2 = track.querySelector(".p2");
+      if (p2) {
+        boxes.push({
+          x: p2.offsetLeft - left,
+          y: p2.offsetTop - top,
+          w: p2.offsetWidth,
+          h: p2.offsetHeight,
+        });
+      }
+
+      let html = `<rect x="-20" y="-20" width="${W + 40}" height="${H + 40}" fill="white"/>`;
+      boxes.forEach((b) => {
+        html += `<rect x="${b.x - PAD_X}" y="${b.y - PAD_Y}" width="${b.w + PAD_X * 2}" height="${b.h + PAD_Y * 2}" fill="black"/>`;
       });
-
-    // dòng chữ p2: dùng kích thước layout gốc, không bị GSAP transform làm lệch
-    const p2 = track.querySelector(".p2");
-    if (p2) {
-      boxes.push({
-        x: p2.offsetLeft - left,
-        y: p2.offsetTop - top,
-        w: p2.offsetWidth,
-        h: p2.offsetHeight,
-      });
+      holesG.innerHTML = html;
     }
 
-    let html = `<rect x="-20" y="-20" width="${W + 40}" height="${H + 40}" fill="white"/>`;
-    boxes.forEach((b) => {
-      html += `<rect x="${b.x - PAD_X}" y="${b.y - PAD_Y}" width="${b.w + PAD_X * 2}" height="${b.h + PAD_Y * 2}" fill="black"/>`;
+    let lastW = window.innerWidth;
+    function onResize() {
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      update();
+    }
+
+    window.updateCardBorder = update;
+    update();
+    window.addEventListener("load", update);
+    window.addEventListener("resize", onResize);
+    if (document.fonts) document.fonts.ready.then(update);
+    let lastW2 = innerWidth;
+    window.addEventListener("resize", function () {
+      if (innerWidth === lastW2) return;
+      lastW2 = innerWidth;
+      update();
     });
-    holesG.innerHTML = html;
-  }
+    if ("ResizeObserver" in window) {
+      const ro = new ResizeObserver(update);
+      ro.observe(card);
+    }
+  })();
 
-  window.updateCardBorder = update;
-  update();
-  window.addEventListener("load", update);
-  window.addEventListener("resize", update);
-  if (document.fonts) document.fonts.ready.then(update);
-  if (window.ScrollTrigger) ScrollTrigger.addEventListener("refresh", update);
-  if ("ResizeObserver" in window) {
-    const ro = new ResizeObserver(update);
-    ro.observe(card);
-    ro.observe(track);
-  }
-})();
+  (function () {
+    const scroller = document.getElementById("albumScroll");
+    if (!scroller || !window.gsap || lite) return;
+    const wraps = gsap.utils.toArray(".first-card .card-wrap");
+    if (!wraps.length) return;
 
-(function () {
-  const scroller = document.getElementById("albumScroll");
-  const wraps = gsap.utils.toArray(".first-card .card-wrap");
-  if (!scroller || !wraps.length || !window.gsap) return;
+    const dirs = [
+      [-5, -3],
+      [5, 3],
+      [-3, 5],
+      [4, -5],
+      [-5, 3],
+    ];
 
-  const dirs = [[-5, -3], [5, 3], [-3, 5], [4, -5], [-5, 3]];
-
-  const drifts = wraps.map(function (w, i) {
-    const img = w.querySelector("img");
-    const d = dirs[i % dirs.length];
-    gsap.set(img, { scale: 1.15 });
-    return gsap.to(img, {
-      xPercent: d[0],
-      yPercent: d[1],
-      scale: 1.32,
-      duration: 6 + (i % 4) * 1.3,
-      ease: "sine.inOut",
-      yoyo: true,
-      repeat: -1,
-      paused: true,
-    });
-  });
-
-  new IntersectionObserver(function (es) {
-    drifts.forEach(function (t) {
-      es[0].isIntersecting ? t.play() : t.pause();
-    });
-  }, { threshold: 0.2 }).observe(scroller);
-
-  if (matchMedia("(hover: hover)").matches) {
-    const design = gsap.utils.toArray(
-      "#albumScroll .design-text, #albumScroll .design-first, #albumScroll .design-last, #albumScroll .design-block"
-    );
-
-    wraps.forEach(function (w) {
+    const drifts = wraps.map(function (w, i) {
       const img = w.querySelector("img");
-
-      w.addEventListener("mouseenter", function () {
-        drifts[wraps.indexOf(w)].pause();
-        gsap.to(img, { scale: 1.4, duration: 0.6, ease: "power2.out", overwrite: "auto" });
-        gsap.to(
-          wraps.filter(function (o) { return o !== w; }).concat(design),
-          { filter: "brightness(0.6)", duration: 0.45, overwrite: "auto" }
-        );
-      });
-
-      w.addEventListener("mouseleave", function () {
-        const drift = drifts[wraps.indexOf(w)];
-        gsap.to(img, {
-          scale: 1.2,
-          duration: 0.6,
-          ease: "power2.out",
-          overwrite: "auto",
-          onComplete: function () {
-            if (!w.matches(":hover")) drift.play();
-          },
-        });
-        gsap.to(wraps.concat(design), { filter: "brightness(1)", duration: 0.45, overwrite: "auto" });
+      const d = dirs[i % dirs.length];
+      gsap.set(img, { scale: 1.15 });
+      return gsap.to(img, {
+        xPercent: d[0],
+        yPercent: d[1],
+        scale: 1.32,
+        duration: 6 + (i % 4) * 1.3,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        paused: true,
       });
     });
-  }
-})();
+
+    new IntersectionObserver(
+      function (es) {
+        drifts.forEach(function (t) {
+          es[0].isIntersecting ? t.play() : t.pause();
+        });
+      },
+      { threshold: 0.2 },
+    ).observe(scroller);
+
+    if (matchMedia("(hover: hover)").matches) {
+      const design = gsap.utils.toArray(
+        "#albumScroll .design-text, #albumScroll .design-first, #albumScroll .design-last, #albumScroll .design-block",
+      );
+
+      wraps.forEach(function (w) {
+        const img = w.querySelector("img");
+
+        w.addEventListener("mouseenter", function () {
+          drifts[wraps.indexOf(w)].pause();
+          gsap.to(img, {
+            scale: 1.4,
+            duration: 0.6,
+            ease: "power2.out",
+            overwrite: "auto",
+          });
+          gsap.to(
+            wraps
+              .filter(function (o) {
+                return o !== w;
+              })
+              .concat(design),
+            { filter: "brightness(0.6)", duration: 0.45, overwrite: "auto" },
+          );
+        });
+
+        w.addEventListener("mouseleave", function () {
+          const drift = drifts[wraps.indexOf(w)];
+          gsap.to(img, {
+            scale: 1.2,
+            duration: 0.6,
+            ease: "power2.out",
+            overwrite: "auto",
+            onComplete: function () {
+              if (!w.matches(":hover")) drift.play();
+            },
+          });
+          gsap.to(wraps.concat(design), {
+            filter: "brightness(1)",
+            duration: 0.45,
+            overwrite: "auto",
+          });
+        });
+      });
+    }
+  })();
 })();

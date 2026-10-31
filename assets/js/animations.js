@@ -14,6 +14,18 @@
   }
   const hasSplit = !!window.SplitText;
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({
+    ignoreMobileResize: true,
+    autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
+  });
+  let stW = innerWidth,
+    stTimer;
+  window.addEventListener("resize", () => {
+    if (innerWidth === stW) return;
+    stW = innerWidth;
+    clearTimeout(stTimer);
+    stTimer = setTimeout(() => ScrollTrigger.refresh(), 250);
+  });
   if (hasSplit) gsap.registerPlugin(SplitText);
 
   const $ = (s, r = document) => r.querySelector(s);

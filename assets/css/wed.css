@@ -1417,7 +1417,7 @@ footer .sub {
 .p2 {
   display: flex;
   gap: 0.4rem;
-  top: 2rem;
+  top: 1.5rem;
   left: 19rem;
   z-index: -1;
 }
@@ -2474,4 +2474,93 @@ footer .sub {
 }
 .hero-title p {
   text-shadow: 0 1px 6px rgba(20, 3, 3, 0.9);
+}
+
+@media (max-width: 720px), (hover: none) {
+  .slider {
+    filter: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+    will-change: auto;
+  }
+
+  .album-scroll::before {
+    filter: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+    opacity: 0.8;
+  }
+
+  .card-wrap img {
+    filter: none;
+  }
+
+  .shine-sweep {
+    display: none;
+  }
+
+  .invite .mid-info,
+  .invite .design-mid {
+    animation: none;
+  }
+}
+
+.hero {
+  min-height: var(--app-h, 100svh) !important;
+}
+
+.album-scroll {
+  --album-h: var(--app-h, 100svh) !important;
+}
+
+.album-track {
+  --slide-w: min(78cqw, calc(min(var(--app-h, 100svh) * 0.78, 40rem) * 0.75)) !important;
+}
+
+@media (max-width: 720px), (hover: none) {
+  .hero-media .frame.on {
+    animation: none;
+  }
+  .hero-media .frame.leaving {
+    transform: none;
+  }
+}
+
+@keyframes p2-bob {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+.p2-lite span {
+  animation: p2-bob 2.4s ease-in-out infinite;
+  animation-play-state: paused;
+}
+
+.p2-lite span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.p2-lite span:nth-child(2) {
+  animation-delay: -0.4s;
+}
+
+.p2-lite span:nth-child(3) {
+  animation-delay: -0.8s;
+}
+
+.p2-lite span:nth-child(4) {
+  animation-delay: -1.2s;
+}
+
+.p2-lite span:nth-child(5) {
+  animation-delay: -1.6s;
+}
+
+.p2-lite.is-on span {
+  animation-play-state: running;
 }
