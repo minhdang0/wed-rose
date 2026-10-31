@@ -1122,8 +1122,8 @@
       const p2 = track.querySelector(".p2");
       if (p2) {
         boxes.push({
-          x: p2.offsetLeft - left,
-          y: p2.offsetTop - top,
+          x: p2.offsetLeft + card.offsetLeft - left,
+          y: p2.offsetTop + card.offsetTop - top,
           w: p2.offsetWidth,
           h: p2.offsetHeight,
         });

@@ -5,12 +5,11 @@
 (function () {
   "use strict";
 
-  /* ================= CẤU HÌNH ================= */
   var CFG = {
     enabled: true,
-    allowHosts: ["localhost", "127.0.0.1"], // chạy thử ở đây thì không khoá (xoá đi nếu muốn khoá cả khi dev)
-    blockContextMenu: true, // chuột phải
-    blockSelectCopy: false, // true = cấm bôi đen / copy (khách khó chép địa chỉ)
+    allowHosts: ["localhost", "127.0.0.1"],
+    blockContextMenu: true,
+    blockSelectCopy: false,
     blockDrag: true, // kéo ảnh
     checkInterval: 500, // ms giữa hai lần kiểm tra devtools
     useDebuggerTrap: true, // bẫy bằng "debugger" (chính xác nhất, nhưng làm DevTools bị dừng liên tục)
