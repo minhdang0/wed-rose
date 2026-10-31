@@ -285,15 +285,22 @@
   });
 
   setInterval(() => {
-    if (document.body.classList.contains("opened")) {
-      spawnPetals(5000);
+    if (document.body.classList.contains("opened") && !document.hidden) {
+      spawnPetals(3000);
     }
-  }, 10000);
+  }, 25000);
 
   /* hero slideshow */
+  const heroEl = document.querySelector(".hero");
   const frames = Array.from(document.querySelectorAll("#heroMedia .frame"));
-  if (frames.length > 1 && !reduce) {
+  if (heroEl && frames.length > 1 && !reduce) {
     let i = 0;
+    let heroVisible = true;
+
+    new IntersectionObserver(function (es) {
+      heroVisible = es[0].isIntersecting;
+      heroEl.classList.toggle("is-offscreen", !heroVisible);
+    }).observe(heroEl);
 
     // giải mã sẵn ảnh nền để lúc chuyển không bị khựng
     frames.forEach(function (f) {
@@ -301,10 +308,12 @@
       if (!m) return;
       const im = new Image();
       im.src = m[1];
-      if (im.decode) im.decode().catch(function () { });
+      if (im.decode) im.decode().catch(function () {});
     });
 
     setInterval(function () {
+      if (!heroVisible || document.hidden || !document.body.classList.contains("opened")) return;
+
       const prev = frames[i];
       i = (i + 1) % frames.length;
       const next = frames[i];
@@ -317,7 +326,7 @@
 
       setTimeout(function () {
         prev.classList.remove("leaving");
-      }, 2200);
+      }, 1500);
     }, 7000);
   }
 
@@ -352,7 +361,7 @@
     container.setAttribute("aria-hidden", "true");
     document.body.appendChild(container);
 
-    const total = 40;
+    const total = window.matchMedia("(max-width: 720px)").matches ? 14 : 30;
     let spawned = 0;
     const spawner = setInterval(() => {
       if (spawned >= total) {

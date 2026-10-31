@@ -31,6 +31,8 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
@@ -44,6 +46,24 @@ body {
   max-width: 480px;
   margin: 0 auto;
   touch-action: pan-y pinch-zoom;
+}
+
+@supports (overflow: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+}
+
+body {
+  overscroll-behavior-x: none;
+}
+
+header,
+section,
+footer {
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 body:not(.opened) {
