@@ -13,6 +13,8 @@
     return;
   }
   const hasSplit = !!window.SplitText;
+  // điện thoại: bỏ filter blur khi hiện chữ (rất tốn GPU)
+  const LITE = window.matchMedia("(max-width: 720px), (hover: none)").matches;
   gsap.registerPlugin(ScrollTrigger);
   ScrollTrigger.config({
     ignoreMobileResize: true,
@@ -42,7 +44,7 @@
   const TEXT_IN = {
     opacity: 0,
     y: 22,
-    filter: "blur(5px)",
+    ...(LITE ? {} : { filter: "blur(5px)" }),
     duration: 0.9,
     ease: "power2.out",
   };
@@ -208,7 +210,7 @@
       tl(note, "top 88%").from(words($(".wn-line", note)), {
         opacity: 0,
         y: 14,
-        filter: "blur(4px)",
+        ...(LITE ? {} : { filter: "blur(4px)" }),
         duration: 0.7,
         ease: "power2.out",
         stagger: 0.05,
@@ -265,7 +267,7 @@
           {
             opacity: 0,
             y: 16,
-            filter: "blur(4px)",
+            ...(LITE ? {} : { filter: "blur(4px)" }),
             duration: 0.7,
             ease: "power2.out",
             stagger: 0.05,
@@ -429,7 +431,7 @@
       t.from($("img", cal), { scale: 1.3, duration: 2, ease: "power2.out" }, 0)
         .from(
           $(".cal-text span", cal),
-          { opacity: 0, y: -20, filter: "blur(4px)", duration: 1 },
+          { opacity: 0, y: -20, ...(LITE ? {} : { filter: "blur(4px)" }), duration: 1 },
           0.3,
         )
         .from(
