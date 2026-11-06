@@ -2888,3 +2888,36 @@ footer .sub {
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
 }
+/* ===== ALBUM trên điện thoại: khung cao hơn, bớt vuông ===== */
+@media (max-width: 720px) {
+  .first-card {
+    width: 96cqw;
+    height: 94%;
+  }
+}
+
+/* ===== HIỆU NĂNG ===== */
+/* không giữ 10 layer GPU thường trực; GSAP tự tạo layer khi đang bay */
+.gl-stage .card-wrap {
+  will-change: auto;
+}
+
+/* điện thoại: nền album không dùng filter/mask trên ảnh lớn,
+   thay bằng lớp phủ xám nhẹ + dải mờ đầu/cuối */
+@media (max-width: 720px), (hover: none) {
+  .album-bg {
+    filter: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .album-scroll.has-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(to bottom, var(--paper, #fbf6ec) 0%, rgba(251, 246, 236, 0) 18%, rgba(251, 246, 236, 0) 82%, var(--paper, #fbf6ec) 100%),
+      rgba(60, 48, 48, 0.32);
+  }
+}
