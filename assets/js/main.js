@@ -376,7 +376,7 @@
     if (document.body.classList.contains("opened") && !document.hidden) {
       spawnPetals(3000);
     }
-  }, 25000);
+  }, 15000);
 
   /* hero slideshow */
   const heroEl = document.querySelector(".hero");
@@ -448,7 +448,7 @@
   }
 
   //falling flower petal effect
-  function spawnPetals(durationMs = 6000) {
+  function spawnPetals(durationMs = 4000) {
     if (reduce) return;
     const colors = ["#7a1f26", "#a9424a", "#c9727a", "#e6b4b8", "#c9a227"];
     const container = document.createElement("div");
@@ -456,7 +456,7 @@
     container.setAttribute("aria-hidden", "true");
     document.body.appendChild(container);
 
-    const total = window.matchMedia("(max-width: 720px)").matches ? 14 : 30;
+    const total = window.matchMedia("(max-width: 720px)").matches ? 30 : 50;
     let spawned = 0;
     const spawner = setInterval(() => {
       if (spawned >= total) {
@@ -488,7 +488,7 @@
     }, 110);
 
     setTimeout(() => clearInterval(spawner), durationMs);
-    setTimeout(() => container.remove(), durationMs + 10000);
+    setTimeout(() => container.remove(), durationMs + 9000);
   }
 
   /* our love story */
