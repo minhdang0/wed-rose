@@ -224,10 +224,16 @@
       var wrap = document.createElement("div");
       wrap.className = "card-wrap";
       var im = document.createElement("img");
-      im.loading = "eager";
       im.decoding = "async";
       im.alt = "";
-      im.src = urls[k % urls.length];
+      // 3 ảnh đầu tải ngay, các ảnh còn lại tải sau khi trang xong (đỡ nghẽn mạng/CPU)
+      var u = urls[k % urls.length];
+      if (k < 3) {
+        im.loading = "eager";
+        im.src = u;
+      } else {
+        im.dataset.src = u;
+      }
       wrap.appendChild(im);
       stage.appendChild(wrap);
     }
@@ -1250,32 +1256,16 @@
 
     function layout() {
       var sw = stage.clientWidth;
-      var h = stage.clientHeight * 0.92;
-      var w = h * RATIO;
-      if (w > sw * 0.7) {
-        w = sw * 0.7; // luôn chừa chỗ cho ảnh hai bên
-        h = w / RATIO;
+      var narrow = window.innerWidth <= 720; // điện thoại: ảnh cao và to hơn
+      var ratio = narrow ? 0.64 : RATIO;
+      var h = stage.clientHeight * (narrow ? 0.96 : 0.92);
+      var w = h * ratio;
+      var cap = sw * (narrow ? 0.8 : 0.7); // chừa chỗ cho ảnh hai bên
+      if (w > cap) {
+        w = cap;
+        h = w / ratio;
       }
       gsap.set(cards, { width: w, height: h, marginLeft: -w / 2, marginTop: -h / 2 });
-    }
-
-    /* vài ngôi sao lấp lánh trang trí trong khung (không nhận chuột) */
-    if (!reduce) {
-      [
-        [8, 14, 0.9, 0],
-        [92, 20, 0.7, 0.8],
-        [14, 84, 0.8, 1.5],
-        [88, 80, 1, 0.4],
-        [50, 6, 0.6, 1.1],
-        [50, 94, 0.6, 1.9],
-      ].forEach(function (p) {
-        var sp = document.createElement("i");
-        sp.className = "gl-spark";
-        sp.textContent = "\u2726";
-        sp.style.cssText =
-          "left:" + p[0] + "%;top:" + p[1] + "%;font-size:" + p[2] * 1.4 + "rem;animation-delay:" + p[3] + "s";
-        stage.appendChild(sp);
-      });
     }
 
     layout();
@@ -1289,6 +1279,23 @@
       layout();
     });
     if ("ResizeObserver" in window) new ResizeObserver(layout).observe(stage);
+
+    function loadImg(c) {
+      var im = c && c.querySelector("img");
+      if (im && !im.getAttribute("src") && im.dataset.src) {
+        im.loading = "eager";
+        im.src = im.dataset.src;
+      }
+    }
+    function loadRest() {
+      cards.forEach(function (c, i) {
+        setTimeout(function () {
+          loadImg(c);
+        }, i * 250);
+      });
+    }
+    if (document.readyState === "complete") setTimeout(loadRest, 800);
+    else window.addEventListener("load", function () { setTimeout(loadRest, 800); });
 
     /* ---- nền phía sau = chính ảnh đang active (chuyển mờ chéo) ---- */
     var scroller = document.getElementById("albumScroll");
@@ -1420,6 +1427,7 @@
       scrub.vars.offset += spacing;
       scrub.invalidate().restart();
       step++;
+      for (var q = 0; q < 3; q++) loadImg(cards[(step + q) % n]);
       setBg(((step % n) + n) % n); // ảnh chính sau mỗi lần bấm = thẻ thứ step
     }
 
