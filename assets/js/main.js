@@ -196,6 +196,43 @@
       );
   });
 
+  /* Album: số thẻ ảnh = số ảnh trong wedding.json (images.gallery).
+     Nếu không có mảng đó thì dùng các ảnh đang có trong HTML.
+     Ít hơn 10 ảnh thì lặp lại cho đủ 10 thẻ để hiệu ứng bay không bị chồng. */
+  (function () {
+    var stage = document.getElementById("albumStage");
+    if (!stage) return;
+    var gal = weddingData.images && weddingData.images.gallery;
+    var urls = Array.isArray(gal)
+      ? gal.filter(function (u) {
+          return typeof u === "string" && u;
+        })
+      : [];
+    if (!urls.length) {
+      urls = Array.prototype.map
+        .call(stage.querySelectorAll("img"), function (im) {
+          return im.getAttribute("src");
+        })
+        .filter(Boolean);
+    }
+    if (!urls.length) return;
+    var MIN = 10;
+    var total =
+      urls.length >= MIN ? urls.length : Math.ceil(MIN / urls.length) * urls.length;
+    stage.innerHTML = "";
+    for (var k = 0; k < total; k++) {
+      var wrap = document.createElement("div");
+      wrap.className = "card-wrap";
+      var im = document.createElement("img");
+      im.loading = "eager";
+      im.decoding = "async";
+      im.alt = "";
+      im.src = urls[k % urls.length];
+      wrap.appendChild(im);
+      stage.appendChild(wrap);
+    }
+  })();
+
   document.querySelectorAll("[data-wedding-lines]").forEach(function (element) {
     const values = getWeddingValue(element.getAttribute("data-wedding-lines"));
     const lines = element.querySelectorAll("span");
@@ -285,6 +322,30 @@
     if (music.paused) playMusic();
     else music.pause();
   });
+
+  /* Rời tab / ẩn trình duyệt / đóng trang: tạm dừng nhạc (giữ nguyên vị trí).
+     Quay lại thì phát tiếp từ đúng đoạn đó. Người dùng tự tắt nhạc thì không tự bật lại. */
+  let resumeAfterHidden = false;
+
+  function pauseForHidden() {
+    if (!music.paused) {
+      resumeAfterHidden = true;
+      music.pause();
+    }
+  }
+
+  function resumeIfNeeded() {
+    if (!resumeAfterHidden) return;
+    resumeAfterHidden = false;
+    playMusic();
+  }
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) pauseForHidden();
+    else resumeIfNeeded();
+  });
+  window.addEventListener("pagehide", pauseForHidden);
+  window.addEventListener("pageshow", resumeIfNeeded);
 
   function openInvitation() {
     if (envelope.classList.contains("open")) return;
@@ -892,7 +953,7 @@
     var track = scroller.querySelector("#albumTrack");
     var cards = gsap.utils.toArray("#albumScroll .first-card .card-wrap");
     var sliders = gsap.utils.toArray("#albumScroll .design-first .slider");
-    var titleSpan = scroller.querySelector(".design-text span");
+    var titleSpan = gsap.utils.toArray("#albumScroll .design-text:not(.p2) span");
 
     gsap.set(track, { autoAlpha: 0 });
 
@@ -926,10 +987,10 @@
         stagger: { each: 0.2 },
       });
 
-      if (titleSpan) {
+      if (titleSpan.length) {
         glowTl = gsap.to(titleSpan, {
           textShadow:
-            "0 0 18px rgba(255, 246, 214, 0.95), 0 0 36px rgba(201, 162, 39, 0.6)",
+            "0 0 10px rgba(255, 246, 214, 1), 0 0 24px rgba(255, 246, 214, 0.9), 0 0 48px rgba(201, 162, 39, 0.85)",
           duration: 1.6,
           ease: "sine.inOut",
           yoyo: true,
@@ -1103,31 +1164,7 @@
       const sr = svg.getBoundingClientRect(); // gốc toạ độ của svg trên màn hình
       const boxes = [];
 
-      // các phần tử xoay (p1, p3), khối slider, design-block: lấy bounding rect
-      track
-        .querySelectorAll(
-          ".design-text:not(.p2), .design-first, .design-last, .design-block",
-        )
-        .forEach((el) => {
-          const r = el.getBoundingClientRect();
-          boxes.push({
-            x: r.left - sr.left,
-            y: r.top - sr.top,
-            w: r.width,
-            h: r.height,
-          });
-        });
-
-      // dòng chữ p2: dùng kích thước layout gốc, không bị GSAP transform làm lệch
-      const p2 = track.querySelector(".p2");
-      if (p2) {
-        boxes.push({
-          x: p2.offsetLeft + card.offsetLeft - left,
-          y: p2.offsetTop + card.offsetTop - top,
-          w: p2.offsetWidth,
-          h: p2.offsetHeight,
-        });
-      }
+      // Đã bỏ phần khoét viền quanh chữ/vạch sáng: viền chạy liền một nét.
 
       let html = `<rect x="-20" y="-20" width="${W + 40}" height="${H + 40}" fill="white"/>`;
       boxes.forEach((b) => {
@@ -1166,55 +1203,15 @@
     const wraps = gsap.utils.toArray(".first-card .card-wrap");
     if (!wraps.length) return;
 
-    const dirs = [
-      [-5, -3],
-      [5, 3],
-      [-3, 5],
-      [4, -5],
-      [-5, 3],
-    ];
-
-    const drifts = wraps.map(function (w, i) {
-      const img = w.querySelector("img");
-      const d = dirs[i % dirs.length];
-      gsap.set(img, { scale: 1.15 });
-      return gsap.to(img, {
-        xPercent: d[0],
-        yPercent: d[1],
-        scale: 1.32,
-        duration: 6 + (i % 4) * 1.3,
-        ease: "sine.inOut",
-        yoyo: true,
-        repeat: -1,
-        paused: true,
-      });
-    });
-
-    new IntersectionObserver(
-      function (es) {
-        drifts.forEach(function (t) {
-          es[0].isIntersecting ? t.play() : t.pause();
-        });
-      },
-      { threshold: 0.2 },
-    ).observe(scroller);
-
+    // Đã bỏ hiệu ứng zoom in/out của ảnh (drift + zoom khi hover).
+    // Chỉ giữ: rê chuột vào ảnh thì làm tối các thẻ khác và phần trang trí.
     if (matchMedia("(hover: hover)").matches) {
       const design = gsap.utils.toArray(
         "#albumScroll .design-text, #albumScroll .design-first, #albumScroll .design-last, #albumScroll .design-block",
       );
 
       wraps.forEach(function (w) {
-        const img = w.querySelector("img");
-
         w.addEventListener("mouseenter", function () {
-          drifts[wraps.indexOf(w)].pause();
-          gsap.to(img, {
-            scale: 1.4,
-            duration: 0.6,
-            ease: "power2.out",
-            overwrite: "auto",
-          });
           gsap.to(
             wraps
               .filter(function (o) {
@@ -1226,16 +1223,6 @@
         });
 
         w.addEventListener("mouseleave", function () {
-          const drift = drifts[wraps.indexOf(w)];
-          gsap.to(img, {
-            scale: 1.2,
-            duration: 0.6,
-            ease: "power2.out",
-            overwrite: "auto",
-            onComplete: function () {
-              if (!w.matches(":hover")) drift.play();
-            },
-          });
           gsap.to(wraps.concat(design), {
             filter: "brightness(1)",
             duration: 0.45,
@@ -1244,5 +1231,204 @@
         });
       });
     }
+  })();
+  /* =====================================================================
+     ALBUM — thẻ ảnh bay GSAP (seamless loop). Bấm / chạm vào ảnh để sang ảnh kế.
+     Không dùng ScrollTrigger/pin nữa, không có nút Prev/Next.
+     ===================================================================== */
+  (function () {
+    var stage = document.getElementById("albumStage");
+    if (!stage || typeof gsap === "undefined") return;
+
+    var frame = document.getElementById("albumFrame");
+    var first = stage.parentNode; // .first-card
+    var cards = gsap.utils.toArray("#albumStage .card-wrap");
+    var n = cards.length;
+    if (!n) return;
+
+    var RATIO = 0.68; // rộng / cao của ảnh chính (nhỏ hơn = ảnh cao hơn)
+
+    function layout() {
+      var sw = stage.clientWidth;
+      var h = stage.clientHeight * 0.92;
+      var w = h * RATIO;
+      if (w > sw * 0.7) {
+        w = sw * 0.7; // luôn chừa chỗ cho ảnh hai bên
+        h = w / RATIO;
+      }
+      gsap.set(cards, { width: w, height: h, marginLeft: -w / 2, marginTop: -h / 2 });
+    }
+
+    /* vài ngôi sao lấp lánh trang trí trong khung (không nhận chuột) */
+    if (!reduce) {
+      [
+        [8, 14, 0.9, 0],
+        [92, 20, 0.7, 0.8],
+        [14, 84, 0.8, 1.5],
+        [88, 80, 1, 0.4],
+        [50, 6, 0.6, 1.1],
+        [50, 94, 0.6, 1.9],
+      ].forEach(function (p) {
+        var sp = document.createElement("i");
+        sp.className = "gl-spark";
+        sp.textContent = "\u2726";
+        sp.style.cssText =
+          "left:" + p[0] + "%;top:" + p[1] + "%;font-size:" + p[2] * 1.4 + "rem;animation-delay:" + p[3] + "s";
+        stage.appendChild(sp);
+      });
+    }
+
+    layout();
+    window.addEventListener("load", function () {
+      layout();
+    });
+    var lastW = window.innerWidth;
+    window.addEventListener("resize", function () {
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      layout();
+    });
+    if ("ResizeObserver" in window) new ResizeObserver(layout).observe(stage);
+
+    /* ---- nền phía sau = chính ảnh đang active (chuyển mờ chéo) ---- */
+    var scroller = document.getElementById("albumScroll");
+    var bgs = [];
+    var bgFront = 0;
+    if (scroller) {
+      scroller.classList.add("has-bg");
+      for (var b = 0; b < 2; b++) {
+        var d = document.createElement("div");
+        d.className = "album-bg";
+        d.setAttribute("aria-hidden", "true");
+        scroller.insertBefore(d, scroller.firstChild);
+        bgs.push(d);
+      }
+    }
+    function setBg(i, instant) {
+      if (!bgs.length) return;
+      var im = cards[i] && cards[i].querySelector("img");
+      var url = im && (im.currentSrc || im.src);
+      if (!url) return;
+      var back = bgFront === 0 ? 1 : 0;
+      var dur = instant ? 0 : 0.9;
+      bgs[back].style.backgroundImage = 'url("' + url.replace(/"/g, "%22") + '")';
+      gsap.to(bgs[back], { opacity: 1, duration: dur, ease: "power1.inOut", overwrite: true });
+      gsap.to(bgs[bgFront], { opacity: 0, duration: dur, ease: "power1.inOut", overwrite: true });
+      bgFront = back;
+    }
+    setBg(0, true);
+
+    if (reduce) {
+      var idx = 0;
+      gsap.set(cards, { xPercent: 0, scale: 1, opacity: 0 });
+      gsap.set(cards[0], { opacity: 1 });
+      var simple = function () {
+        gsap.set(cards[idx], { opacity: 0 });
+        idx = (idx + 1) % n;
+        gsap.set(cards[idx], { opacity: 1 });
+        setBg(idx);
+      };
+      stage.addEventListener("click", simple);
+      stage.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          simple();
+        }
+      });
+      return;
+    }
+
+    gsap.set(cards, { xPercent: 400, opacity: 0, scale: 0 });
+
+    var spacing = 0.1;
+    var animateFunc = function (el) {
+      var t = gsap.timeline();
+      t.fromTo(
+        el,
+        { scale: 0, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          zIndex: 100,
+          duration: 0.5,
+          yoyo: true,
+          repeat: 1,
+          ease: "power1.in",
+          immediateRender: false,
+        },
+      ).fromTo(
+        el,
+        { xPercent: 400 },
+        { xPercent: -400, duration: 1, ease: "none", immediateRender: false },
+        0,
+      );
+      return t;
+    };
+
+    function buildSeamlessLoop(items, spacing, animateFunc) {
+      var overlap = Math.ceil(1 / spacing),
+        startTime = items.length * spacing + 0.5,
+        loopTime = (items.length + overlap) * spacing + 1,
+        rawSequence = gsap.timeline({ paused: true }),
+        seamlessLoop = gsap.timeline({
+          paused: true,
+          repeat: -1,
+          onRepeat: function () {
+            this._time === this._dur && (this._tTime += this._dur - 0.01);
+          },
+        }),
+        l = items.length + overlap * 2,
+        i;
+      for (i = 0; i < l; i++) {
+        rawSequence.add(animateFunc(items[i % items.length]), i * spacing);
+      }
+      rawSequence.time(startTime);
+      seamlessLoop
+        .to(rawSequence, {
+          time: loopTime,
+          duration: loopTime - startTime,
+          ease: "none",
+        })
+        .fromTo(
+          rawSequence,
+          { time: overlap * spacing + 1 },
+          {
+            time: startTime,
+            duration: startTime - (overlap * spacing + 1),
+            immediateRender: false,
+            ease: "none",
+          },
+        );
+      return seamlessLoop;
+    }
+
+    var loop = buildSeamlessLoop(cards, spacing, animateFunc);
+    var wrapTime = gsap.utils.wrap(0, loop.duration());
+    var playhead = { offset: 0 };
+    var scrub = gsap.to(playhead, {
+      offset: 0,
+      duration: 0.9,
+      ease: "power2.out",
+      paused: true,
+      onUpdate: function () {
+        loop.time(wrapTime(playhead.offset));
+      },
+    });
+
+    var step = 0;
+    function next() {
+      scrub.vars.offset += spacing;
+      scrub.invalidate().restart();
+      step++;
+      setBg(((step % n) + n) % n); // ảnh chính sau mỗi lần bấm = thẻ thứ step
+    }
+
+    stage.addEventListener("click", next);
+    stage.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        next();
+      }
+    });
   })();
 })();
